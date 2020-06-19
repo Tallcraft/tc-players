@@ -1,0 +1,27 @@
+# Global headers
+/*
+  # HSTS + preloading
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+  # Cache without revalidation
+  Cache-Control: public, max-age=31536000
+
+  # Disallow iframes
+  Content-Security-Policy: frame-ancestors 'none'
+  X-Frame-Options: DENY
+
+  # Strict content type
+  X-Content-Type-Options: nosniff
+
+  # Cross site scripting protection
+  X-XSS-Protection: 1; mode=block
+
+  # Disable referrer sending
+  Referrer-Policy: no-referrer
+
+  # Remove server header
+  Server: Web
+
+# Enable cache revalidation for index file only
+/index.html
+  Cache-Control: must-revalidate

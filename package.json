@@ -1,0 +1,42 @@
+{
+  "name": "tc-bans",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build --modern",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "apollo-cache-inmemory": "^1.6.5",
+    "babel-polyfill": "^6.26.0",
+    "core-js": "^2.6.11",
+    "graphql-tag": "^2.10.3",
+    "material-design-icons-iconfont": "^5.0.1",
+    "roboto-fontface": "^0.10.0",
+    "vue": "^2.6.11",
+    "vue-apollo": "^3.0.3",
+    "vue-cli-plugin-apollo": "^0.20.0",
+    "vue-router": "^3.1.6",
+    "vuetify": "^1.5.24"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.12.1",
+    "@vue/cli-plugin-eslint": "^3.12.1",
+    "@vue/cli-service": "^4.3.0",
+    "@vue/eslint-config-airbnb": "^4.0.1",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "stylus": "^0.54.7",
+    "stylus-loader": "^3.0.1",
+    "vue-cli-plugin-vuetify": "^0.5.0",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify-loader": "^1.4.3"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
+}
