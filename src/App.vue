@@ -1,43 +1,50 @@
 <template>
     <div>
         <v-app :dark="darkTheme">
-            <v-toolbar color="primary" dark fixed>
+            <div style="margin:2%"></div>
+            <v-main style="margin-top:auto">
+                <v-container fluid>
+                    <router-view></router-view>
+                </v-container>
+            </v-main>
+                        <v-toolbar color="primary" dark
+             style="margin-top:auto;
+              height:10%;
+              width:100%;
+              position:fixed">
                 <router-link to="/">
                     <v-toolbar-title id="title"  class="mr-3" >
                         {{$appName}}
                     </v-toolbar-title>
                 </router-link>
-                <v-spacer></v-spacer>
+                <v-spacer style="height:0"></v-spacer>
                 <v-text-field
-                        flat
                         solo-inverted
                         hide-details
                         prepend-inner-icon="search"
-                        label="Player Search"
+                        label="Search for a player"
                         v-model="playerInput"
                         @change="playerLookup"
                 ></v-text-field>
-                <v-spacer></v-spacer>
-                <v-btn text icon @click="darkTheme = !darkTheme">
-                    <v-icon>invert_colors</v-icon>
+                <v-spacer style="height:0"></v-spacer>
+                <v-btn text icon @click="darkTheme = !darkTheme" style="height:0">
+                    <v-icon style="height:0">invert_colors</v-icon>
                 </v-btn>
                 <v-btn dark>
                     <router-link to="/status">
                       Server Status
                     </router-link>
                 </v-btn>
-                <!-- <v-toolbar-items>
-                    <v-btn href="https://forum.tallcraft.com/new-topic?category_id=5" flat>Ban Dispute</v-btn>
-                </v-toolbar-items> -->
             </v-toolbar>
-            <v-main>
-                <v-container fluid>
-                    <router-view></router-view>
-                </v-container>
-            </v-main>
-            <v-footer dark style="text-align:center">
+            <v-footer dark
+             style="text-align:center;
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height:30px;">
               <v-spacer></v-spacer>
-                <h2>Names might not be up to date</h2>
+                <h5>Names might not be up to date</h5>
               <v-spacer></v-spacer>
             </v-footer>
         </v-app>
