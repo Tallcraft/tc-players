@@ -35,6 +35,11 @@
                     <router-view></router-view>
                 </v-container>
             </v-content>
+            <v-footer  style="text-align:center">
+              <v-spacer></v-spacer>
+                <h2>Names might not be up to date</h2>
+              <v-spacer></v-spacer>
+            </v-footer>
         </v-app>
     </div>
 </template>

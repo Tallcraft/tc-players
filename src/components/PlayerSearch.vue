@@ -32,7 +32,7 @@
          style="width:50%;display:block;margin-left:auto;margin-right:auto">
       </div>
       <div  v-if="name=='isuredolovemypotatoes'
-       && !$apollo.queries.players.loading" class="cheese-easter-egg">
+       && !$apollo.queries.players.loading" class="potato-easter-egg">
         <h2 style="margin-top:30px;text-align:center">Have some potatoes instead.</h2>
         <img src="../assets/potato.png"
          style="width:50%;display:block;margin-left:auto;margin-right:auto">
