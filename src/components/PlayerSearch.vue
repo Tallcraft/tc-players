@@ -25,6 +25,10 @@
       </v-data-table>
       <h2 style="margin-top:20px;text-align:center" v-else-if="!$apollo.queries.players.loading">
         Sorry! There were no results.</h2>
+      <h2 style="margin-top:30px;text-align:center" v-if="name=='ratsarethebestanimalsever'"
+        >But there is cheese!</h2>
+      <img src="../assets/cheese.png" style = "display:block;margin-left:auto;margin-right:auto"
+        v-if="name=='ratsarethebestanimalsever'">
     </v-flex>
   </div>
 </template>

@@ -27,14 +27,16 @@
       </v-data-table>
       <div v-if="name!='(global)'">
       <v-spacer></v-spacer>
-      <h1 style="text-align:center;margin-top:20px" v-if="mcServer!=undefined">Players</h1>
+      <h1 style="text-align:center;margin-top:20px" v-if="mcServer!=undefined
+        && mcServer.status.onlinePlayers != null">Players</h1>
       <v-data-table
               :headers="serverPlayersHeader"
               :items="serverPlayersItems"
               hide-actions
               style="margin-top:20px"
               class="elevation-12"
-              v-if="!$apollo.queries.mcServer.loading && mcServer!=undefined"
+              v-if="!$apollo.queries.mcServer.loading && mcServer!=undefined
+               && mcServer.status.onlinePlayers != null"
       >
           <template slot="items" slot-scope="props">
               <td v-for="(item, i) in props.item" :key="i">
@@ -74,7 +76,7 @@
 <script>
 
 import gql from 'graphql-tag';
-import Squid from '@/assets/squid.png';
+import Squid from '../assets/squid.png';
 
 export default {
   name: 'MainView',
@@ -146,7 +148,7 @@ export default {
       }));
     },
     serverPlayersItems() {
-      if (this.mcServer === undefined) {
+      if (this.mcServer === undefined || this.mcServer.status.onlinePlayers === null) {
         return [];
       }
       return this.mcServer.status.onlinePlayers.map(player => ({
