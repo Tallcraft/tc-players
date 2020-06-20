@@ -28,7 +28,7 @@
       <div  v-if="name=='ratsarethebestanimalsever'
        && !$apollo.queries.players.loading" class="cheese-easter-egg">
         <h2 style="margin-top:30px;text-align:center">But there is cheese!</h2>
-        <img src="../assets/cheese.png" style = "display:block;margin-left:auto;margin-right:auto">
+        <img src="../assets/cheese.png" style = "width:50%;display:block;margin-left:auto;margin-right:auto">
       </div>
       <div  v-if="name=='isuredolovemypotatoes'
        && !$apollo.queries.players.loading" class="cheese-easter-egg">
