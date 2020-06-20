@@ -25,9 +25,16 @@
       </v-data-table>
       <h2 style="margin-top:20px;text-align:center" v-else-if="!$apollo.queries.players.loading">
         Sorry! There were no results.</h2>
-      <div  v-if="name=='ratsarethebestanimalsever' && !$apollo.queries.players.loading">
+      <div  v-if="name=='ratsarethebestanimalsever'
+       && !$apollo.queries.players.loading" class="cheese-easter-egg">
         <h2 style="margin-top:30px;text-align:center">But there is cheese!</h2>
         <img src="../assets/cheese.png" style = "display:block;margin-left:auto;margin-right:auto">
+      </div>
+      <div  v-if="name=='isuredolovemypotatoes'
+       && !$apollo.queries.players.loading" class="cheese-easter-egg">
+        <h2 style="margin-top:30px;text-align:center">Have some potatoes instead.</h2>
+        <img src="../assets/potato.png"
+         style="width:50%;display:block;margin-left:auto;margin-right:auto">
       </div>
     </v-flex>
   </div>
