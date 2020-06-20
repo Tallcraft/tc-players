@@ -70,6 +70,7 @@ export default {
   },
   computed: {
     playerHistoryData() {
+      console.debug(this.players);
       if (this.players === undefined) {
         return [];
       }
@@ -120,7 +121,7 @@ export default {
       `,
       variables() {
         return {
-          name: this.name.replace('_', '\\_'),
+          name: `${this.name.replace('_', '\\_')}%`,
         };
       },
     },
