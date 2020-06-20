@@ -1,43 +1,17 @@
 <template>
   <div>
-    <v-flex xs10 sm8 offset-sm2>
-      <h1> Players matching '{{ name }}' ({{length}} Results):</h1>
-      <v-progress-linear indeterminate v-show="$apollo.queries.players.loading"></v-progress-linear>
-      <v-data-table
-              :headers="playerHistoryHeader"
-              :items="playerHistoryData"
-              hide-actions
-              class="elevation-12"
-              @click:row="handleClick"
-              v-if="!$apollo.queries.players.loading && playerHistoryData.length!=0"
-      >
-        <template slot="items" slot-scope="props" v-if="!checkOneResult()">
-            <td v-for="(item, key) in props.item" :key="key">
-                  <router-link
-                          v-if="key === 'name'"
-                          :to="`/player/${item}`"
-                          :dark="darkTheme">
-                      {{ item }}
-                  </router-link>
-                  <template :dark="darkTheme" v-else>{{item}}</template>
-              </td>
-        </template>
-      </v-data-table>
-      <h2 style="margin-top:20px;text-align:center" v-else-if="!$apollo.queries.players.loading">
-        Sorry! There were no results.</h2>
-      <div  v-if="name=='ratsarethebestanimalsever'
-       && !$apollo.queries.players.loading" class="cheese-easter-egg">
-        <h2 style="margin-top:30px;text-align:center">But there is cheese!</h2>
-        <img src="../assets/cheese.png"
-         style="width:50%;display:block;margin-left:auto;margin-right:auto">
-      </div>
-      <div  v-if="name=='isuredolovemypotatoes'
-       && !$apollo.queries.players.loading" class="potato-easter-egg">
-        <h2 style="margin-top:30px;text-align:center">Have some potatoes instead.</h2>
-        <img src="../assets/potato.png"
-         style="width:50%;display:block;margin-left:auto;margin-right:auto">
-      </div>
-    </v-flex>
+    <div v-for="(player, index) in players" :key="index" class="row">
+      <v-btn inline style="display:inline;width:15%">
+        <router-link :to="`../player/${player.lastSeenName}`"
+         style="margin-left:auto;margin-right:auto">
+          {{player.lastSeenName}}
+        </router-link>
+      </v-btn>
+        <p style="margin-left:10%">
+          Last Online At : {{formatDate(player.lastLogin*1)}}</p>
+        <p style="margin-left:auto;margin-right:auto">
+          First Logged In On : {{formatDate(player.firstLogin*1)}}</p>
+    </div>
   </div>
 </template>
 
@@ -61,6 +35,7 @@ export default {
   },
   data() {
     return {
+      players: this.executeQuery(),
       playerHistoryHeader: [
         {
           text: 'Name',
@@ -85,7 +60,7 @@ export default {
       if (this.players === undefined) {
         return [];
       }
-      return this.players.map(player => ({
+      return this.players.map((player) => ({
         name: player.lastSeenName,
         firstLogin: this.formatDate(player.firstLogin * 1),
         lastLogin: this.formatDate(player.lastLogin * 1),
@@ -109,32 +84,26 @@ export default {
       const d = new Date(date);
       return d.toLocaleString();
     },
+    async executeQuery() {
+      const players = await this.$apollo.query({
+        query: gql`query {
+        players(searchPlayerName:"%${this.name}%", limit:100){
+          lastSeenName
+          firstLogin
+          lastLogin
+          }
+          }`,
+      });
+      this.players = players.data.players;
+      return this.players;
+    },
     checkOneResult() {
+      console.debug(this.players, this.apollo, this);
       if (this.players.length === 1 && this.players !== undefined) {
         this.$router.replace(`../player/${this.players[0].lastSeenName}`);
         return true;
       }
       return false;
-    },
-  },
-  apollo: {
-    // Query with parameters
-    players: {
-      // gql query
-      query: gql`
-      query players($name:String!) {
-        players(searchPlayerName: $name, limit: 100){
-            lastSeenName
-            firstLogin
-            lastLogin
-          }
-        }
-      `,
-      variables() {
-        return {
-          name: `%${this.name.replace('_', '\\_').replace('%', '\\%')}%`,
-        };
-      },
     },
   },
 };

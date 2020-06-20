@@ -140,7 +140,7 @@ export default {
       if (this.mcServer === undefined) {
         return [];
       }
-      return [this.mcServer].map(server => ({
+      return [this.mcServer].map((server) => ({
         name: server.name,
         version: server.version,
         online: server.status.isOnline,
@@ -151,7 +151,7 @@ export default {
       if (this.mcServer === undefined || this.mcServer.status.onlinePlayers === null) {
         return [];
       }
-      return this.mcServer.status.onlinePlayers.map(player => ({
+      return this.mcServer.status.onlinePlayers.map((player) => ({
         name: player.name,
         firstLogin: this.formatDate(player.firstLogin * 1),
         lastLogin: this.formatDate(player.lastLogin * 1),

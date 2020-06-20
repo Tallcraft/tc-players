@@ -98,7 +98,7 @@ export default {
       if (this.mcServers === undefined) {
         return [];
       }
-      return this.mcServers.map(server => ({
+      return this.mcServers.map((server) => ({
         name: server.name,
         version: server.version,
         online: server.status.isOnline,
@@ -121,7 +121,7 @@ export default {
       return d.toLocaleString();
     },
     serverIdByName(name) {
-      return this.mcServers.find(item => item.name === name).id;
+      return this.mcServers.find((item) => item.name === name).id;
     },
   },
   apollo: {

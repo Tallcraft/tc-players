@@ -21,7 +21,6 @@
                     <div class="headline">{{players.name}}</div>
                 </v-card-title>
 
-
                 <v-list two-line>
                     <v-list-tile>
                         <v-list-tile-action>
@@ -48,7 +47,6 @@
                         </v-list-tile-content>
 
                     </v-list-tile>
-
 
                     <v-list-tile>
                         <v-list-tile-action>
@@ -83,8 +81,6 @@
             </v-card>
         </v-flex>
     </v-layout>
-
-
 </template>
 
 <script>
@@ -157,7 +153,7 @@ export default {
     },
     playerHistoryData() {
       if (this.players == null || this.players[0].lastSeenName !== this.name) return null;
-      return this.players[0].infractions.bans.map(ban => ({
+      return this.players[0].infractions.bans.map((ban) => ({
         active: ban.isActive,
         server: ban.server.name,
         reason: ban.reason,

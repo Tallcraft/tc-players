@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-app :dark="darkTheme">
-            <v-toolbar color="primary" dark fixed clipped-left app>
+            <v-toolbar color="primary" dark fixed>
                 <router-link to="/">
                     <v-toolbar-title id="title"  class="mr-3" >
                         {{$appName}}
@@ -18,10 +18,10 @@
                         @change="playerLookup"
                 ></v-text-field>
                 <v-spacer></v-spacer>
-                <v-btn flat icon @click="darkTheme = !darkTheme">
+                <v-btn text icon @click="darkTheme = !darkTheme">
                     <v-icon>invert_colors</v-icon>
                 </v-btn>
-                <v-btn>
+                <v-btn dark>
                     <router-link to="/status">
                       Server Status
                     </router-link>
@@ -30,12 +30,12 @@
                     <v-btn href="https://forum.tallcraft.com/new-topic?category_id=5" flat>Ban Dispute</v-btn>
                 </v-toolbar-items> -->
             </v-toolbar>
-            <v-content>
+            <v-main>
                 <v-container fluid>
                     <router-view></router-view>
                 </v-container>
-            </v-content>
-            <v-footer  style="text-align:center">
+            </v-main>
+            <v-footer dark style="text-align:center">
               <v-spacer></v-spacer>
                 <h2>Names might not be up to date</h2>
               <v-spacer></v-spacer>
@@ -90,7 +90,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
     #title {

@@ -57,7 +57,7 @@ export default {
       if (this.players === undefined) {
         return [];
       }
-      return this.players.map(player => ({
+      return this.players.map((player) => ({
         name: player.lastSeenName,
         firstLogin: this.formatDate(player.firstLogin * 1),
       }));
