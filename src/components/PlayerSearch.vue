@@ -70,7 +70,6 @@ export default {
   },
   computed: {
     playerHistoryData() {
-      console.debug(this.players);
       if (this.players === undefined) {
         return [];
       }
