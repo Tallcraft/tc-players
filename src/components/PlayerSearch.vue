@@ -120,7 +120,7 @@ export default {
       `,
       variables() {
         return {
-          name: `${this.name.replace('_', '\\_')}%`,
+          name: `%${this.name.replace('_', '\\_')}%`,
         };
       },
     },
