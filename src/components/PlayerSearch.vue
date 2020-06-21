@@ -1,40 +1,45 @@
 <template>
   <div>
     <v-progress-linear indeterminate v-show="!Array.isArray(players)"></v-progress-linear>
-    <h1 v-show="Array.isArray(players)">Search results for '{{name}}' :</h1>
-    <div style="display:inline-block;margin-bottom:50px">
-      <v-btn
-        style="display:inline-block;
-        width:40%;
-        position:absolute;
-        left:0"
-        class="btn-text"
-        @click.native="changePage(-1)"
-        :disabled="page<=1 || wait">
-        <p block style="margin:auto">Previous</p>
-      </v-btn>
-      <v-btn inline-block
-        style="display:inline-block;
-        width:40%;
-        right:0;
-        height:20;
-        position:absolute;"
-        class="btn-text"
-        @click.native="changePage(1)"
-        :disabled="nextDisabled">
-        <p block style="margin:auto">Next</p>
-      </v-btn>
+    <div v-if="players.length == 0">
+      <h3 style="text-align:center">No Results.</h3>
     </div>
-    <div block v-for="(player, index) in players" :key="index" class="row">
-      <v-btn block
-        left
-        style="display:inline;
-        width:100%;
-        height:20;"
-        class="btn-text"
-        @click.native="$router.push(`/player/${player.uuid}`)">
-        <p block style="margin:auto">[RANK] {{player.lastSeenName}}</p>
-      </v-btn>
+    <div v-if="players.length > 0">
+      <h1 v-show="Array.isArray(players)">Search results for '{{name}}' :</h1>
+      <div style="display:inline-block;margin-bottom:50px">
+        <v-btn
+          style="display:inline-block;
+          width:40%;
+          position:absolute;
+          left:0"
+          class="btn-text"
+          @click.native="changePage(-1)"
+          :disabled="page<=1 || wait">
+          <p block style="margin:auto">Previous</p>
+        </v-btn>
+        <v-btn inline-block
+          style="display:inline-block;
+          width:40%;
+          right:0;
+          height:20;
+          position:absolute;"
+          class="btn-text"
+          @click.native="changePage(1)"
+          :disabled="nextDisabled">
+          <p block style="margin:auto">Next</p>
+        </v-btn>
+      </div>
+      <div block v-for="(player, index) in players" :key="index" class="row">
+        <v-btn block
+          left
+          style="display:inline;
+          width:100%;
+          height:20;"
+          class="btn-text"
+          @click.native="$router.push(`/player/${player.uuid}`)">
+          <p block style="margin:auto">[RANK] {{player.lastSeenName}}</p>
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -56,7 +61,7 @@ export default {
   name: 'MainView',
   props: {
     name: {
-      default: 'hmm',
+      default: '',
       type: String,
     },
     page: {
@@ -105,7 +110,7 @@ export default {
       const players = await this.$apollo.query({
         query: gql`
         query {
-          players(searchPlayerName:"%${this.name}%", limit:20, offset:${(this.page - 1) * 20}){
+          players(searchPlayerName:"%${this.name.replace('_', '\\\\_')}%", limit:20, offset:${(this.page - 1) * 20}){
             lastSeenName
             firstLogin
             lastLogin
@@ -129,6 +134,9 @@ export default {
           [this.name, this.page] = nme;
           this.$router.replace(`/search/${this.name}/page/${this.page}`);
         }
+      }
+      if (this.name === '') {
+        this.$router.replace('/main');
       }
     },
     changePage(amount) {

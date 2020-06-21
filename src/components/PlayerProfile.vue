@@ -6,8 +6,7 @@
               && !playerNotFound"></v-progress-linear>
             <v-img
               :src="playerAvatarUrl"
-              style="left:0;height:30%"
-              class="justify-center"
+              style="height:40%"
             >
             </v-img>
             <v-card v-if="name == null || name === ''">
@@ -20,19 +19,33 @@
             </v-card>
             <v-card v-else-if="player != null">
               <div primary-title class="headline">{{player.name}}</div>
-              <v-icon color="accent">perm_identity</v-icon>
-              <h3>UUID: {{player.uuid}}</h3>
-              <v-divider inset style="margin:2%"></v-divider>
-              <v-icon class="justify-center" color="accent">date_range</v-icon>
-              <h3>Last Login: {{playerLastLogin}}
+              <!-- <v-icon color="accent">perm_identity</v-icon> -->
+              <h3 class="justify-center"
+                style="text-align:center;">Name: {{player.lastSeenName}}
+                <br>UUID: {{player.uuid}}</h3>
+              <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
+              <!-- <v-icon class="justify-center" color="accent">date_range</v-icon> -->
+              <h3 class="justify-center"
+                style="text-align:center;">Last Login: {{playerLastLogin}}
               <br>First Login: {{playerFirstLogin}}</h3>
-              <h3 class="justify-center" style="text-align:center;margin-top:10px">Bans</h3>
+              <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
+              <h3 class="justify-center"
+                style="
+                text-align:center;
+                margin-top:10px"
+                v-if="playerHistoryData"
+                >
+                Ban Information
+                </h3>
+              <!-- <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider> -->
               <v-data-table
                 :headers="playerHistoryHeader"
                 :items="playerHistoryData"
+                v-if="playerHistoryData"
                 hide-default-footer
                 class="elevation-1"
               >
+              <!-- <v-divider vertical block style="margin-top:2%;margin-bottom:2%"></v-divider> -->
               </v-data-table>
             </v-card>
         </v-flex>
@@ -108,8 +121,9 @@ export default {
       return this.formatDate(this.player.lastLogin * 1);
     },
     playerHistoryData() {
-      if (this.player === null || this.player === undefined) return [];
-      if (this.player.infractions === undefined) return [];
+      if (this.player === null || this.player === undefined) return null;
+      if (this.player.infractions === undefined) return null;
+      if (this.player.infractions.bans.length === 0) return null;
       return this.player.infractions.bans.map((ban) => ({
         active: ban.isActive,
         server: ban.server.name,
