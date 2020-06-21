@@ -2,11 +2,16 @@
   <div>
     <v-progress-linear indeterminate v-show="!Array.isArray(players)"></v-progress-linear>
     <h1 v-show="Array.isArray(players)">Search results for '{{name}}' : {{length}} Results</h1>
-    <div v-for="(player, index) in players" :key="index" class="row">
-      <v-btn block left style="display:inline;width:15%;height:20;justify:left" class="btn-text">
-        <router-link :to="`../player/${player.lastSeenName}`">
-          [RANK] {{player.lastSeenName}}
-        </router-link>
+    <div block v-for="(player, index) in players" :key="index" class="row">
+      <v-btn block
+        left
+        style="display:inline;
+        width:100%;
+        height:20;
+        justify:left"
+        class="btn-text"
+        @click.native="$router.push(`../player/${player.lastSeenName}`)">
+        <a block :href="`../player/${player.lastSeenName}`">[RANK] {{player.lastSeenName}}</a>
       </v-btn>
     </div>
   </div>
