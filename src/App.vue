@@ -1,15 +1,15 @@
 <template>
     <div>
         <v-app :dark="darkTheme">
-            <div style="margin:2%"></div>
-            <v-main style="margin-top:auto">
+            <div style="margin-bottom:5%"></div>
+            <v-main style="margin-top:80">
                 <v-container fluid>
                     <router-view></router-view>
                 </v-container>
             </v-main>
             <v-toolbar color="primary" dark
              style="
-              height:10%;
+              height:77;
               width:100%;
               position:fixed">
                 <router-link to="/">
@@ -36,14 +36,14 @@
                     </router-link>
                 </v-btn>
             </v-toolbar>
-            <div style="margin:1%"></div>
+            <div style="margin:20px"></div>
             <v-footer dark
              style="text-align:center;
                 position: fixed;
                 left: 0;
                 bottom: 0;
                 width: 100%;
-                height:5%;">
+                height:35px;">
               <v-spacer></v-spacer>
                 <h5>Names might not be up to date</h5>
               <v-spacer></v-spacer>

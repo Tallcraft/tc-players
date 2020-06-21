@@ -151,8 +151,6 @@ export default {
       return (d.getFullYear() === 1969) ? 'Never' : d.toLocaleString();
     },
     async executeQuery() {
-      // this.player = null;
-      console.debug(this.player);
       const player = await this.$apollo.query({
         query: gql`
         query {

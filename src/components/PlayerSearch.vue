@@ -5,22 +5,23 @@
     <div style="display:inline-block;margin-bottom:4%">
       <v-btn
         style="display:inline-block;
-        width:10%;
+        width:40%;
         position:absolute;
         left:0"
         class="btn-text"
         @click.native="changePage(-1)"
-        :disabled="page<=1">
+        :disabled="page<=1 || wait">
         <p block style="margin:auto">Previous</p>
       </v-btn>
       <v-btn inline-block
         style="display:inline-block;
-        width:10%;
+        width:40%;
         right:0;
+        height:20;
         position:absolute;"
         class="btn-text"
         @click.native="changePage(1)"
-        :disabled="players.length<20">
+        :disabled="players.length<20 || wait">
         <p block style="margin:auto">Next</p>
       </v-btn>
     </div>
@@ -29,8 +30,7 @@
         left
         style="display:inline;
         width:100%;
-        height:20;
-        justify:left"
+        height:20;"
         class="btn-text"
         @click.native="$router.push(`/player/${player.uuid}`)">
         <p block style="margin:auto">[RANK] {{player.lastSeenName}}</p>
@@ -66,6 +66,7 @@ export default {
   data() {
     return {
       players: this.executeQuery(),
+      wait: false,
     };
   },
   watch: {
@@ -95,6 +96,7 @@ export default {
       return d.toLocaleString();
     },
     async executeQuery() {
+      this.preTests();
       this.players = null;
       const players = await this.$apollo.query({
         query: gql`
@@ -109,15 +111,32 @@ export default {
       });
       this.players = players.data.players;
       this.checkOneResult();
+      this.wait = false;
       return this.players;
     },
+    preTests() {
+      if ((this.page * 1) < 1) {
+        this.$router.replace(`/search/${this.name}/page/1`);
+        this.page = 1;
+      }
+      if (this.name.includes(':')) {
+        const nme = this.name.split(':');
+        if (!Number.isNaN((nme[1] * 1))) {
+          [this.name, this.page] = nme;
+          this.$router.replace(`/search/${this.name}/page/${this.page}`);
+        }
+      }
+    },
     changePage(amount) {
-      console.debug(this.name);
+      this.wait = true;
+      if ((this.page * 1) + amount < 1) {
+        this.$router.push(`/search/${this.name}/page/1`);
+      }
       this.$router.push(`/search/${this.name}/page/${(this.page * 1) + amount}`);
     },
     checkOneResult() {
       if (this.players.length === 1 && this.players !== undefined) {
-        this.$router.replace(`../player/${this.players[0].uuid}`);
+        this.$router.replace(`/player/${this.players[0].uuid}`);
         return true;
       }
       return false;
