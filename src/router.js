@@ -50,6 +50,12 @@ export default new Router({
     },
     {
       path: '/search/:name',
+      component: PlayerSearch,
+      props: true,
+      redirect: '/search/:name/page/1',
+    },
+    {
+      path: '/search/:name/page/:page',
       name: 'search',
       component: PlayerSearch,
       props: true,

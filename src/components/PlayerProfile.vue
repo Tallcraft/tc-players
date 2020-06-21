@@ -2,62 +2,38 @@
     <v-layout row>
         <v-flex xs12 sm6 offset-sm3>
             <v-progress-linear indeterminate
-                               v-show="$apollo.queries.players.loading"></v-progress-linear>
-
-            <v-card v-if="name == null || name === ''">
-                <v-card-title>Please provide a player name to search for</v-card-title>
-            </v-card>
-            <v-card v-else-if="playerNotFound">
-                <v-card-title>Could not find player '{{name}}'</v-card-title>
-            </v-card>
-            <v-card v-else-if="players != null">
+                               v-show="(player === null || player === undefined)
+                                && !playerNotFound"></v-progress-linear>
                 <v-img
                         :src="playerAvatarUrl"
-                        height="300px"
+                        style="position:absolute;left:0;width:20%"
                 >
                 </v-img>
+            <v-card v-if="name == null || name === ''">
+                <v-card-title>Please provide a uuid.</v-card-title>
+            </v-card>
+            <v-card v-else-if="playerNotFound">
+                <v-card-title class="justify-center">
+                  Could not find a player with the uuid <br>'{{name}}'</v-card-title>
+            </v-card>
+            <v-card v-else-if="player != null">
 
                 <v-card-title primary-title>
-                    <div class="headline">{{players.name}}</div>
+                    <div class="headline">{{player.name}}</div>
                 </v-card-title>
 
                 <v-list two-line>
                     <v-list-tile>
-                        <v-list-tile-action>
-                            <v-icon color="accent">perm_identity</v-icon>
-                        </v-list-tile-action>
-
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{players[0].uuid}}</v-list-tile-title>
-                            <v-list-tile-sub-title>UUID</v-list-tile-sub-title>
-                        </v-list-tile-content>
-
+                      <v-icon color="accent">perm_identity</v-icon>
+                      <h3>UUID: {{player.uuid}}</h3>
                     </v-list-tile>
 
-                    <v-divider inset></v-divider>
+                    <v-divider inset style="margin:2%"></v-divider>
 
                     <v-list-tile>
-                        <v-list-tile-action>
-                            <v-icon color="accent">date_range</v-icon>
-                        </v-list-tile-action>
-
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{playerLastLogin}}</v-list-tile-title>
-                            <v-list-tile-sub-title>Last Login</v-list-tile-sub-title>
-                        </v-list-tile-content>
-
-                    </v-list-tile>
-
-                    <v-list-tile>
-                        <v-list-tile-action>
-                            <v-icon color="accent">date_range</v-icon>
-                        </v-list-tile-action>
-
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{playerFirstLogin}}</v-list-tile-title>
-                            <v-list-tile-sub-title>First Login</v-list-tile-sub-title>
-                        </v-list-tile-content>
-
+                      <v-icon color="accent">date_range</v-icon>
+                      <h3>Last Login: {{playerLastLogin}}</h3>
+                      <h3>First Login: {{playerFirstLogin}}</h3>
                     </v-list-tile>
 
                 </v-list>
@@ -67,7 +43,7 @@
                     <v-data-table
                             :headers="playerHistoryHeader"
                             :items="playerHistoryData"
-                            hide-actions
+                            hide-default-footer
                             class="elevation-1"
                     >
                         <template slot="items" slot-scope="props">
@@ -97,6 +73,7 @@ export default {
   },
   data() {
     return {
+      player: this.executeQuery(),
       playerHistoryHeader: [
         {
           text: 'Active',
@@ -133,27 +110,26 @@ export default {
   },
   computed: {
     playerNotFound() {
-      if (this.players === undefined) {
+      if (this.player === undefined) {
         return false;
       }
-      return (!this.$apollo.queries.players.loading && this.players == null)
-      || this.players[0].lastSeenName !== this.name;
+      return this.player == null;
     },
     playerAvatarUrl() {
-      if (this.players == null) {
+      if (this.player == null) {
         return '';
       }
-      return `https://crafatar.com/avatars/${this.players[0].uuid}?size=300&overlay`;
+      return `https://crafatar.com/avatars/${this.player.uuid}?size=300&overlay`;
     },
     playerFirstLogin() {
-      return this.formatDate(this.players[0].firstLogin * 1);
+      return this.formatDate(this.player.firstLogin * 1);
     },
     playerLastLogin() {
-      return this.formatDate(this.players[0].lastLogin * 1);
+      return this.formatDate(this.player.lastLogin * 1);
     },
     playerHistoryData() {
-      if (this.players == null || this.players[0].lastSeenName !== this.name) return null;
-      return this.players[0].infractions.bans.map((ban) => ({
+      if (this.player === null || this.player === undefined) return null;
+      return this.player.infractions.bans.map((ban) => ({
         active: ban.isActive,
         server: ban.server.name,
         reason: ban.reason,
@@ -163,6 +139,9 @@ export default {
       }));
     },
   },
+  watch: {
+    $route: 'executeQuery',
+  },
   methods: {
     formatDate(date) {
       if (date == null) {
@@ -171,39 +150,34 @@ export default {
       const d = new Date(date);
       return (d.getFullYear() === 1969) ? 'Never' : d.toLocaleString();
     },
-  },
-  apollo: {
-    // Query with parameters
-    players: {
-      // gql query
-      query: gql`
-      query players($name:String!) {
-        players(searchPlayerName:$name,limit:1){
-          lastSeenName
-          firstLogin
-          uuid
-          lastLogin
-          infractions{
-            bans{
-              isActive
-              reason
-              staffName
-              server{
-                name
-              }
-              createdAt
-              expiresAt
-            }
-          }
+    async executeQuery() {
+      // this.player = null;
+      console.debug(this.player);
+      const player = await this.$apollo.query({
+        query: gql`
+        query {
+  player(uuid: "${this.name}") {
+    lastSeenName
+    uuid
+    lastLogin
+    firstLogin
+    infractions {
+      bans {
+        reason
+        isActive
+        staffName
+        server {
+          name
         }
+        createdAt
+        expiresAt
       }
-      `,
-      // Static parameters
-      variables() {
-        return {
-          name: this.name,
-        };
-      },
+    }
+  }
+}`,
+      });
+      this.player = player.data.player;
+      return this.player;
     },
   },
 };

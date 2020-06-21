@@ -1,7 +1,29 @@
 <template>
   <div>
     <v-progress-linear indeterminate v-show="!Array.isArray(players)"></v-progress-linear>
-    <h1 v-show="Array.isArray(players)">Search results for '{{name}}' : {{length}} Results</h1>
+    <h1 v-show="Array.isArray(players)">Search results for '{{name}}' :</h1>
+    <div style="display:inline-block;margin-bottom:4%">
+      <v-btn
+        style="display:inline-block;
+        width:10%;
+        position:absolute;
+        left:0"
+        class="btn-text"
+        @click.native="changePage(-1)"
+        :disabled="page<=1">
+        <p block style="margin:auto">Previous</p>
+      </v-btn>
+      <v-btn inline-block
+        style="display:inline-block;
+        width:10%;
+        right:0;
+        position:absolute;"
+        class="btn-text"
+        @click.native="changePage(1)"
+        :disabled="players.length<20">
+        <p block style="margin:auto">Next</p>
+      </v-btn>
+    </div>
     <div block v-for="(player, index) in players" :key="index" class="row">
       <v-btn block
         left
@@ -10,8 +32,8 @@
         height:20;
         justify:left"
         class="btn-text"
-        @click.native="$router.push(`../player/${player.lastSeenName}`)">
-        <a block :href="`../player/${player.lastSeenName}`">[RANK] {{player.lastSeenName}}</a>
+        @click.native="$router.push(`/player/${player.uuid}`)">
+        <p block style="margin:auto">[RANK] {{player.lastSeenName}}</p>
       </v-btn>
     </div>
   </div>
@@ -34,8 +56,11 @@ export default {
   name: 'MainView',
   props: {
     name: {
-      default: '',
+      default: 'hmm',
       type: String,
+    },
+    page: {
+      default: 0,
     },
   },
   data() {
@@ -44,7 +69,6 @@ export default {
     };
   },
   watch: {
-    // call again the method if the route changes
     $route: 'executeQuery',
   },
   computed: {
@@ -75,10 +99,11 @@ export default {
       const players = await this.$apollo.query({
         query: gql`
         query {
-          players(searchPlayerName:"%${this.name}%", limit:100){
+          players(searchPlayerName:"%${this.name}%", limit:20, offset:${(this.page - 1) * 20}){
             lastSeenName
             firstLogin
             lastLogin
+            uuid
           }
         }`,
       });
@@ -86,9 +111,13 @@ export default {
       this.checkOneResult();
       return this.players;
     },
+    changePage(amount) {
+      console.debug(this.name);
+      this.$router.push(`/search/${this.name}/page/${(this.page * 1) + amount}`);
+    },
     checkOneResult() {
       if (this.players.length === 1 && this.players !== undefined) {
-        this.$router.replace(`../player/${this.players[0].lastSeenName}`);
+        this.$router.replace(`../player/${this.players[0].uuid}`);
         return true;
       }
       return false;
