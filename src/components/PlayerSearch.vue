@@ -3,17 +3,11 @@
     <v-progress-linear indeterminate v-show="!Array.isArray(players)"></v-progress-linear>
     <h1 v-show="Array.isArray(players)">Search results for '{{name}}' : {{length}} Results</h1>
     <div v-for="(player, index) in players" :key="index" class="row">
-      <v-btn inline style="display:inline;width:15%;height:20">
-        <router-link :to="`../player/${player.lastSeenName}`"
-         style="margin-left:auto;margin-right:auto">
-          {{player.lastSeenName}}
+      <v-btn block left style="display:inline;width:15%;height:20;justify:left" class="btn-text">
+        <router-link :to="`../player/${player.lastSeenName}`">
+          [RANK] {{player.lastSeenName}}
         </router-link>
       </v-btn>
-      <p style="margin-left:10%">
-        Last Online At : {{formatDate(player.lastLogin*1)}}</p>
-      <p style="margin-left:auto;margin-right:auto">
-        First Logged In On : {{formatDate(player.firstLogin*1)}}</p>
-      <div style="height:50px"></div>
     </div>
   </div>
 </template>
@@ -21,6 +15,9 @@
 <style scoped>
   a {
     text-decoration: none;
+  }
+  .btn-text {
+    float: left;
   }
 </style>
 
