@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-app :dark="darkTheme">
-            <div style="margin:3%"></div>
+            <div style="margin:5%"></div>
             <v-main style="margin-top:auto">
                 <v-container fluid>
                     <router-view></router-view>
@@ -36,7 +36,7 @@
                     </router-link>
                 </v-btn>
             </v-toolbar>
-            <div style="margin:1%"></div>
+            <div style="margin:2%"></div>
             <v-footer dark
              style="text-align:center;
                 position: fixed;
