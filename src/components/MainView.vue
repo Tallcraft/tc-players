@@ -11,7 +11,7 @@
             solo-inverted
             hide-details
             prepend-inner-icon="search"
-            label="Search for a Player"
+            label="Player search"
             v-model="playerInput"
             @change="playerLookup"
     ></v-text-field>
@@ -38,6 +38,7 @@ export default {
   },
   data() {
     return {
+      playerInput: '',
       playerHistoryHeader: [
         {
           text: 'Name',

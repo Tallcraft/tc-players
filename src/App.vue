@@ -1,8 +1,7 @@
 <template>
     <div>
         <v-app :dark="darkTheme">
-            <div style="margin-bottom:5%"></div>
-            <v-main style="margin-top:80">
+            <v-main style="margin-top:80px">
                 <v-container fluid>
                     <router-view></router-view>
                 </v-container>
@@ -14,25 +13,25 @@
               position:fixed">
                 <router-link to="/">
                     <v-toolbar-title id="title"  class="mr-3" >
-                        {{$appName}}
+                        <v-icon>home</v-icon>
                     </v-toolbar-title>
                 </router-link>
-                <v-spacer style="height:0"></v-spacer>
+                <!-- <v-spacer style="height:0"></v-spacer> -->
                 <v-text-field
                         solo-inverted
                         hide-details
                         prepend-inner-icon="search"
-                        label="Search for a player"
+                        label="Player search"
                         v-model="playerInput"
                         @change="playerLookup"
                 ></v-text-field>
-                <v-spacer style="height:0"></v-spacer>
+                <!-- <v-spacer style="height:0"></v-spacer> -->
                 <v-btn text icon @click="darkTheme = !darkTheme" style="height:0">
                     <v-icon style="height:0">invert_colors</v-icon>
                 </v-btn>
-                <v-btn dark>
+                <v-btn dark style="width:10%;font-size:1">
                     <router-link to="/status">
-                      Server Status
+                      Server<br>Status
                     </router-link>
                 </v-btn>
             </v-toolbar>
@@ -71,7 +70,7 @@ export default {
   },
   watch: {
     $route() {
-      this.playerInput = '';
+      this.input = '';
     },
     // Save darkTheme state in localStorage
     darkTheme() {

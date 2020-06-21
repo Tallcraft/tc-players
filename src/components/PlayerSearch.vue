@@ -2,7 +2,7 @@
   <div>
     <v-progress-linear indeterminate v-show="!Array.isArray(players)"></v-progress-linear>
     <h1 v-show="Array.isArray(players)">Search results for '{{name}}' :</h1>
-    <div style="display:inline-block;margin-bottom:4%">
+    <div style="display:inline-block;margin-bottom:50px">
       <v-btn
         style="display:inline-block;
         width:40%;
@@ -21,7 +21,7 @@
         position:absolute;"
         class="btn-text"
         @click.native="changePage(1)"
-        :disabled="players.length<20 || wait">
+        :disabled="nextDisabled">
         <p block style="margin:auto">Next</p>
       </v-btn>
     </div>
@@ -73,6 +73,10 @@ export default {
     $route: 'executeQuery',
   },
   computed: {
+    nextDisabled() {
+      if (this.players == null) return null;
+      return this.players.length < 20 || this.wait;
+    },
     height() {
       const { body } = document;
       const html = document.documentElement;

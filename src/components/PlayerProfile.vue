@@ -2,58 +2,38 @@
     <v-layout row>
         <v-flex xs12 sm6 offset-sm3>
             <v-progress-linear indeterminate
-                               v-show="(player === null || player === undefined)
-                                && !playerNotFound"></v-progress-linear>
-                <v-img
-                        :src="playerAvatarUrl"
-                        style="position:absolute;left:0;width:20%"
-                >
-                </v-img>
+              v-show="(player === null || player === undefined)
+              && !playerNotFound"></v-progress-linear>
+            <v-img
+              :src="playerAvatarUrl"
+              style="left:0;height:30%"
+              class="justify-center"
+            >
+            </v-img>
             <v-card v-if="name == null || name === ''">
-                <v-card-title>Please provide a uuid.</v-card-title>
+                <h3 class="justify-center"
+               style="text-align:center;">Please provide a UUID.</h3>
             </v-card>
             <v-card v-else-if="playerNotFound">
-                <v-card-title class="justify-center">
-                  Could not find a player with the uuid <br>'{{name}}'</v-card-title>
+              <h3 class="justify-center"
+               style="text-align:center;">Could not find a player with the uuid <br>'{{name}}'</h3>
             </v-card>
             <v-card v-else-if="player != null">
-
-                <v-card-title primary-title>
-                    <div class="headline">{{player.name}}</div>
-                </v-card-title>
-
-                <v-list two-line>
-                    <v-list-tile>
-                      <v-icon color="accent">perm_identity</v-icon>
-                      <h3>UUID: {{player.uuid}}</h3>
-                    </v-list-tile>
-
-                    <v-divider inset style="margin:2%"></v-divider>
-
-                    <v-list-tile>
-                      <v-icon color="accent">date_range</v-icon>
-                      <h3>Last Login: {{playerLastLogin}}</h3>
-                      <h3>First Login: {{playerFirstLogin}}</h3>
-                    </v-list-tile>
-
-                </v-list>
-
-                <v-card-text>
-                    <h3>Bans</h3>
-                    <v-data-table
-                            :headers="playerHistoryHeader"
-                            :items="playerHistoryData"
-                            hide-default-footer
-                            class="elevation-1"
-                    >
-                        <template slot="items" slot-scope="props">
-                            <td v-for="(item, i) in props.item" :key="i">
-                                {{ item }}
-                            </td>
-                        </template>
-                    </v-data-table>
-
-                </v-card-text>
+              <div primary-title class="headline">{{player.name}}</div>
+              <v-icon color="accent">perm_identity</v-icon>
+              <h3>UUID: {{player.uuid}}</h3>
+              <v-divider inset style="margin:2%"></v-divider>
+              <v-icon class="justify-center" color="accent">date_range</v-icon>
+              <h3>Last Login: {{playerLastLogin}}
+              <br>First Login: {{playerFirstLogin}}</h3>
+              <h3 class="justify-center" style="text-align:center;margin-top:10px">Bans</h3>
+              <v-data-table
+                :headers="playerHistoryHeader"
+                :items="playerHistoryData"
+                hide-default-footer
+                class="elevation-1"
+              >
+              </v-data-table>
             </v-card>
         </v-flex>
     </v-layout>
@@ -98,12 +78,12 @@ export default {
         {
           text: 'Begin',
           sortable: false,
-          value: 'date',
+          value: 'start',
         },
         {
           text: 'End',
           sortable: false,
-          value: 'date',
+          value: 'end',
         },
       ],
     };
@@ -128,7 +108,8 @@ export default {
       return this.formatDate(this.player.lastLogin * 1);
     },
     playerHistoryData() {
-      if (this.player === null || this.player === undefined) return null;
+      if (this.player === null || this.player === undefined) return [];
+      if (this.player.infractions === undefined) return [];
       return this.player.infractions.bans.map((ban) => ({
         active: ban.isActive,
         server: ban.server.name,
@@ -154,25 +135,25 @@ export default {
       const player = await this.$apollo.query({
         query: gql`
         query {
-  player(uuid: "${this.name}") {
-    lastSeenName
-    uuid
-    lastLogin
-    firstLogin
-    infractions {
-      bans {
-        reason
-        isActive
-        staffName
-        server {
-          name
-        }
-        createdAt
-        expiresAt
-      }
-    }
-  }
-}`,
+          player(uuid: "${this.name}") {
+            lastSeenName
+            uuid
+            lastLogin
+            firstLogin
+            infractions {
+              bans {
+                reason
+                isActive
+                staffName
+                server {
+                  name
+                }
+                createdAt
+                expiresAt
+              }
+            }
+          }
+        }`,
       });
       this.player = player.data.player;
       return this.player;
