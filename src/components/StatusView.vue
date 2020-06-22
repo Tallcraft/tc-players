@@ -5,7 +5,7 @@
       <h4 style="text-align:center;margin-top:20px" v-if="servers!=undefined">
         Last Updated at {{serverQueryTime}}</h4>
       <v-progress-linear indeterminate
-        v-show="servers==undefined || servers==null"></v-progress-linear>
+        v-show="servers==undefined"></v-progress-linear>
       <div block v-for="(server, index) in servers" :key="index" class="row">
         <v-btn block
           left

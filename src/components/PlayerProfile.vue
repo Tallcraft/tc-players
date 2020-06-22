@@ -2,8 +2,7 @@
     <v-layout row>
         <v-flex xs12 sm6 offset-sm3>
             <v-progress-linear indeterminate
-              v-show="(player === null || player === undefined)
-              && !playerNotFound"></v-progress-linear>
+              v-show="player.firstLogin == undefined || playerNotFound"></v-progress-linear>
             <v-card v-if="name == null || name === ''">
                 <h3 class="justify-center"
                style="text-align:center;">Please provide a UUID.</h3>

@@ -2,10 +2,11 @@
   <div>
     <v-flex xs10 sm8 offset-sm2>
       <h1 style="text-align:center" v-if="server!=undefined"> {{server.name}} Status </h1>
+      <h2 style="text-align:center" v-if="server!=undefined">IP | {{server.publicAddress}} </h2>
       <h4 style="text-align:center;margin-top:20px" v-if="server!=undefined">
         Last Updated at {{serverQueryTime}}</h4>
       <v-progress-linear indeterminate
-        v-show="server==null || server==undefined"></v-progress-linear>
+        v-show="server.name==undefined"></v-progress-linear>
       <v-data-table
               :headers="serverStatusHeader"
               :items="serverStatusItems"
@@ -19,16 +20,17 @@
       <v-spacer></v-spacer>
       <h1 style="text-align:center;margin-top:20px" v-if="server!=undefined
         && server.status.onlinePlayers != null">Players</h1>
-      <v-data-table
-              :headers="serverPlayersHeader"
-              :items="serverPlayersItems"
-              hide-default-footer
-              style="margin-top:20px"
-              class="elevation-12"
-              v-if="server!=undefined
-               && server.status.onlinePlayers != null"
-      >
-      </v-data-table>
+      <div block v-for="(player, index) in server.status.onlinePlayers" :key="index" class="row">
+        <v-btn block
+          left
+          style="display:inline;
+          width:100%;
+          height:20;"
+          class="btn-text"
+          @click.native="$router.push(`/player/${player.uuid}`)">
+          <p block style="margin:auto">[RANK] {{player.lastSeenName}}</p>
+        </v-btn>
+      </div>
       </div>
          <template v-if="server==undefined">
             <div>
@@ -161,10 +163,11 @@ export default {
       const server = await this.$apollo.query({
         query: gql`
         query {
-          mcServer(serverId:"survival") {
+          mcServer(serverId:"${this.name}") {
             name
             version
             id
+            publicAddress
             status {
               isOnline
               queryTime
