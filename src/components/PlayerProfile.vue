@@ -17,6 +17,7 @@
                 class="justify-center"
                 style="width:50%;
                 left:25%"
+                loading="Loading Avatar..."
               >
               </v-img>
               <div primary-title class="headline">{{player.name}}</div>
