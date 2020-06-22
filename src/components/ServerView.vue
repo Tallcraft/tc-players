@@ -1,56 +1,36 @@
 <template>
   <div>
     <v-flex xs10 sm8 offset-sm2>
-      <h1 style="text-align:center" v-if="mcServer!=undefined"> {{mcServer.name}} Status </h1>
-      <h4 style="text-align:center;margin-top:20px" v-if="mcServer!=undefined">
+      <h1 style="text-align:center" v-if="server!=undefined"> {{server.name}} Status </h1>
+      <h4 style="text-align:center;margin-top:20px" v-if="server!=undefined">
         Last Updated at {{serverQueryTime}}</h4>
       <v-progress-linear indeterminate
-        v-show="$apollo.queries.mcServer.loading"></v-progress-linear>
+        v-show="server==null || server==undefined"></v-progress-linear>
       <v-data-table
               :headers="serverStatusHeader"
               :items="serverStatusItems"
-              hide-actions
+              hide-default-footer
               style="margin-top:20px"
               class="elevation-12"
-              v-if="!$apollo.queries.mcServer.loading && mcServer!=undefined"
+              v-if="server!=undefined"
       >
-          <template slot="items" slot-scope="props">
-              <td v-for="(item, i) in props.item" :key="i">
-                  <router-link
-                          v-if="i === 'name'"
-                          :to="`/status/${serverIdByName}`">
-                      {{ item }}
-                  </router-link>
-                  <template v-else>{{item}}</template>
-              </td>
-          </template>
       </v-data-table>
       <div v-if="name!='(global)'">
       <v-spacer></v-spacer>
-      <h1 style="text-align:center;margin-top:20px" v-if="mcServer!=undefined
-        && mcServer.status.onlinePlayers != null">Players</h1>
+      <h1 style="text-align:center;margin-top:20px" v-if="server!=undefined
+        && server.status.onlinePlayers != null">Players</h1>
       <v-data-table
               :headers="serverPlayersHeader"
               :items="serverPlayersItems"
-              hide-actions
+              hide-default-footer
               style="margin-top:20px"
               class="elevation-12"
-              v-if="!$apollo.queries.mcServer.loading && mcServer!=undefined
-               && mcServer.status.onlinePlayers != null"
+              v-if="server!=undefined
+               && server.status.onlinePlayers != null"
       >
-          <template slot="items" slot-scope="props">
-              <td v-for="(item, i) in props.item" :key="i">
-                  <router-link
-                      v-if="i === 'name'"
-                      :to="`/player/${item}`">
-                      {{ item }}
-                  </router-link>
-                  <template v-else>{{item}}</template>
-              </td>
-          </template>
       </v-data-table>
       </div>
-         <template v-if="mcServer==undefined && !$apollo.queries.mcServer.loading">
+         <template v-if="server==undefined">
             <div>
                 <v-layout row wrap align-center>
                     <v-flex class="text-xs-center">
@@ -88,6 +68,7 @@ export default {
   },
   data() {
     return {
+      server: this.executeQuery(),
       serverStatusHeader: [
         {
           text: 'Name',
@@ -119,12 +100,12 @@ export default {
         {
           text: 'First Login',
           sortable: false,
-          value: 'version',
+          value: 'firstLogin',
         },
         {
           text: 'Last Login',
           sortable: false,
-          value: 'online',
+          value: 'lastLogin',
         },
       ],
     };
@@ -134,13 +115,13 @@ export default {
       return Squid;
     },
     serversOffline() {
-      return this.mcServer === undefined;
+      return this.server === undefined;
     },
     serverStatusItems() {
-      if (this.mcServer === undefined) {
+      if (this.server === undefined) {
         return [];
       }
-      return [this.mcServer].map((server) => ({
+      return [this.server].map((server) => ({
         name: server.name,
         version: server.version,
         online: server.status.isOnline,
@@ -148,23 +129,23 @@ export default {
       }));
     },
     serverPlayersItems() {
-      if (this.mcServer === undefined || this.mcServer.status.onlinePlayers === null) {
+      if (this.server === undefined || this.server.status.onlinePlayers === null) {
         return [];
       }
-      return this.mcServer.status.onlinePlayers.map((player) => ({
-        name: player.name,
+      return this.server.status.onlinePlayers.map((player) => ({
+        name: player.lastSeenName,
         firstLogin: this.formatDate(player.firstLogin * 1),
         lastLogin: this.formatDate(player.lastLogin * 1),
       })).sort((a, b) => a.name.localeCompare(b.name));
     },
     serverIdByName() {
-      return this.mcServer.id;
+      return this.server.id;
     },
     serverQueryTime() {
-      if (this.mcServer === undefined) {
+      if (this.server === undefined) {
         return null;
       }
-      return this.formatDate(this.mcServer.status.queryTime * 1);
+      return this.formatDate(this.server.status.queryTime * 1);
     },
   },
   methods: {
@@ -175,37 +156,33 @@ export default {
       const d = new Date(date);
       return d.toLocaleString();
     },
-  },
-  apollo: {
-    // Query with parameters
-    mcServer: {
-      // gql query
-      query: gql`
-      query ($id:String!) {
-        mcServer (serverId:$id) {
-          name
-          version
-          id
-          status {
-            isOnline
-            onlinePlayerCount
-            maxPlayerCount
-            queryTime
-            onlinePlayers {
-              name
-              lastSeenName
-              lastLogin
-              firstLogin
+    async executeQuery() {
+      this.server = null;
+      const server = await this.$apollo.query({
+        query: gql`
+        query {
+          mcServer(serverId:"survival") {
+            name
+            version
+            id
+            status {
+              isOnline
+              queryTime
+              onlinePlayerCount
+              maxPlayerCount
+              onlinePlayers{
+                lastSeenName
+                uuid
+                lastLogin
+                firstLogin
+              }
             }
           }
-        }
-      }
-      `,
-      variables() {
-        return {
-          id: this.name,
-        };
-      },
+        }`,
+      });
+      this.server = server.data.mcServer;
+      console.debug(this.server);
+      return this.server;
     },
   },
 };

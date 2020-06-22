@@ -4,11 +4,6 @@
             <v-progress-linear indeterminate
               v-show="(player === null || player === undefined)
               && !playerNotFound"></v-progress-linear>
-            <v-img
-              :src="playerAvatarUrl"
-              style="height:40%"
-            >
-            </v-img>
             <v-card v-if="name == null || name === ''">
                 <h3 class="justify-center"
                style="text-align:center;">Please provide a UUID.</h3>
@@ -17,7 +12,14 @@
               <h3 class="justify-center"
                style="text-align:center;">Could not find a player with the uuid <br>'{{name}}'</h3>
             </v-card>
-            <v-card v-else-if="player != null">
+            <v-card inline v-else-if="player != null">
+              <v-img
+                :src="playerAvatarUrl"
+                class="justify-center"
+                style="width:50%;
+                left:25%"
+              >
+              </v-img>
               <div primary-title class="headline">{{player.name}}</div>
               <!-- <v-icon color="accent">perm_identity</v-icon> -->
               <h3 class="justify-center"
@@ -37,7 +39,6 @@
                 >
                 Ban Information
                 </h3>
-              <!-- <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider> -->
               <v-data-table
                 :headers="playerHistoryHeader"
                 :items="playerHistoryData"
@@ -45,7 +46,6 @@
                 hide-default-footer
                 class="elevation-1"
               >
-              <!-- <v-divider vertical block style="margin-top:2%;margin-bottom:2%"></v-divider> -->
               </v-data-table>
             </v-card>
         </v-flex>

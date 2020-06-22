@@ -1,31 +1,30 @@
 <template>
   <div>
     <v-flex xs10 sm8 offset-sm2>
-      <h1 style="text-align:center" v-if="mcServers!=undefined"> Server Status </h1>
-      <h4 style="text-align:center;margin-top:20px" v-if="mcServers!=undefined">
+      <h1 style="text-align:center" v-if="servers!=undefined"> Server Status </h1>
+      <h4 style="text-align:center;margin-top:20px" v-if="servers!=undefined">
         Last Updated at {{serverQueryTime}}</h4>
       <v-progress-linear indeterminate
-        v-show="$apollo.queries.mcServers.loading"></v-progress-linear>
-      <v-data-table
-              :headers="serverStatusHeader"
-              :items="serverStatusItems"
-              hide-actions
-              style="margin-top:20px"
-              class="elevation-12"
-              v-if="!$apollo.queries.mcServers.loading && mcServers!=undefined"
-      >
-          <template slot="items" slot-scope="props">
-              <td v-for="(item, i) in props.item" :key="i" :dark="darkTheme">
-                  <router-link
-                          v-if="i === 'name'"
-                          :to="`/status/${serverIdByName(item)}`">
-                      {{ item }}
-                  </router-link>
-                  <template v-else>{{item}}</template>
-              </td>
-          </template>
-      </v-data-table>
-         <template v-if="mcServers==undefined && !$apollo.queries.mcServers.loading">
+        v-show="servers==undefined || servers==null"></v-progress-linear>
+      <div block v-for="(server, index) in servers" :key="index" class="row">
+        <v-btn block
+          left
+          style="display:inline;
+          width:100%;
+          height:20;"
+          class="btn-text"
+          @click.native="$router.push(`/status/${server.id}`)">
+          <p v-if="!server.status.isOnline && server.status.isOnline!=null
+           && server.status.isOnline!=undefined"
+           style="margin-top:auto;margin-bottom:auto">❌</p>
+          <p v-if="server.status.isOnline" style="margin-top:auto;margin-bottom:auto">✅</p>
+          <p v-if="server.status==null || server.status.isOnline==undefined"
+           style="margin-top:auto;margin-bottom:auto;">❗</p>
+          <p style="margin-left:auto;margin-top:auto;margin-bottom:auto">{{server.name}}</p>
+          <p style="margin-left:auto;margin-top:auto;margin-bottom:auto">{{server.version}}</p>
+        </v-btn>
+      </div>
+         <template v-if="servers==undefined">
             <div>
                 <v-layout row wrap align-center>
                     <v-flex class="text-xs-center">
@@ -63,6 +62,7 @@ export default {
   },
   data() {
     return {
+      servers: this.executeQuery(),
       serverStatusHeader: [
         {
           text: 'Name',
@@ -92,13 +92,13 @@ export default {
       return Squid;
     },
     serversOffline() {
-      return this.mcServers === undefined;
+      return this.servers === undefined;
     },
     serverStatusItems() {
-      if (this.mcServers === undefined) {
+      if (this.servers === undefined) {
         return [];
       }
-      return this.mcServers.map((server) => ({
+      return this.servers.map((server) => ({
         name: server.name,
         version: server.version,
         online: server.status.isOnline,
@@ -106,10 +106,10 @@ export default {
       }));
     },
     serverQueryTime() {
-      if (this.mcServers === undefined) {
+      if (this.servers === undefined) {
         return null;
       }
-      return this.formatDate(this.mcServers[0].status.queryTime * 1);
+      return this.formatDate(this.servers[0].status.queryTime * 1);
     },
   },
   methods: {
@@ -121,28 +121,31 @@ export default {
       return d.toLocaleString();
     },
     serverIdByName(name) {
-      return this.mcServers.find((item) => item.name === name).id;
+      return this.servers.find((item) => item.name === name).id;
+    },
+    async executeQuery() {
+      this.servers = null;
+      const servers = await this.$apollo.query({
+        query: gql`
+        query {
+          mcServers {
+            name
+            version
+            id
+            status {
+              isOnline
+              queryTime
+            }
+          }
+        }`,
+      });
+      this.servers = servers.data.mcServers;
+      return this.servers;
     },
   },
-  apollo: {
-    // Query with parameters
-    mcServers: {
-      // gql query
-      query: gql`
-      query {
-        mcServers {
-          name
-          version
-          id
-          status {
-            isOnline
-            onlinePlayerCount
-            maxPlayerCount
-            queryTime
-          }
-        }
-      }
-      `,
+  watch: {
+    $route() {
+      this.executeQuery();
     },
   },
 };
