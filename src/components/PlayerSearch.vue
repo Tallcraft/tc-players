@@ -1,8 +1,15 @@
 <template>
   <div>
     <v-progress-linear indeterminate v-show="!Array.isArray(players)"></v-progress-linear>
-    <div v-if="players.length == 0">
+    <div v-if="players.length == 0 && name!='isuredolovemypotatoes'">
       <h3 style="text-align:center">No Results.</h3>
+    </div>
+    <div v-if="players.length == 0 && name=='isuredolovemypotatoes'">
+      <h3 style="text-align:center">
+        Well, there were no results, but there are some potatoes lying around in here.
+      </h3>
+      <v-img src="../assets/potato.png"
+       style="width:25%;margin-left:auto;margin-right:auto"></v-img>
     </div>
     <div v-if="players.length > 0">
       <h1 v-show="Array.isArray(players)">Search results for '{{name}}' :</h1>
