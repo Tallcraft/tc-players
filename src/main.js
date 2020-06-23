@@ -28,10 +28,7 @@ const apolloProvider = new VueApollo({
 Vue.config.productionTip = false;
 
 Vue.prototype.$appName = 'Tallcraft Players';
-Vue.$apollo = client;
 Vue.prototype.$apollo = client;
-Vue.prototype.$console = console;
-Vue.prototype.darkTheme = true;
 Vue.prototype.$clone = (obj) => JSON.parse(JSON.stringify(obj));
 
 new Vue({

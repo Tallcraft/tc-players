@@ -30,9 +30,9 @@
                     <v-icon style="height:0">invert_colors</v-icon>
                 </v-btn>
                 <v-btn dark style="width:10%;font-size:1">
-                    <router-link to="/status">
+                    <a href="https://status.tallcraft.com">
                       Server<br>Status
-                    </router-link>
+                    </a>
                 </v-btn>
             </v-toolbar>
             <div style="margin:20px"></div>
