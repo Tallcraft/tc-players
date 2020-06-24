@@ -44,7 +44,7 @@
           height:20;"
           class="btn-text"
           @click.native="$router.push(`/player/${player.uuid}`)">
-          <p block style="margin:auto">[RANK] {{player.lastSeenName}}</p>
+          <p block style="margin:auto">{{getRanks(player.uuid)}} {{player.lastSeenName}}</p>
         </v-btn>
       </div>
     </div>
@@ -111,6 +111,13 @@ export default {
       const d = new Date(date);
       return d.toLocaleString();
     },
+    getRanks(uuid) {
+      const result = this.players.filter((player) => player.uuid === uuid)[0];
+      if (result == null || result.groups.length === 0) {
+        return null;
+      }
+      return `[${result.groups.map((group) => group.id).join().replaceAll(',', '] [')}]`;
+    },
     async executeQuery() {
       this.preTests();
       this.players = null;
@@ -122,6 +129,9 @@ export default {
             firstLogin
             lastLogin
             uuid
+            groups{
+              id
+            }
           }
         }`,
       });

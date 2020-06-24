@@ -23,8 +23,10 @@
               <div primary-title class="headline">{{player.name}}</div>
               <!-- <v-icon color="accent">perm_identity</v-icon> -->
               <h3 class="justify-center"
-                style="text-align:center;">Name: {{player.lastSeenName}}
-                <br>UUID: {{player.uuid}}</h3>
+                style="text-align:center;">
+                Name: {{player.lastSeenName}}
+                <br>UUID: {{player.uuid}}
+                <br>Rank(s): {{getRanks()}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <!-- <v-icon class="justify-center" color="accent">date_range</v-icon> -->
               <h3 class="justify-center"
@@ -145,6 +147,12 @@ export default {
       const d = new Date(date);
       return (d.getFullYear() === 1969) ? 'Never' : d.toLocaleString();
     },
+    getRanks() {
+      if (this.player === undefined || this.player.groups === undefined) {
+        return null;
+      }
+      return `[${this.player.groups.map((group) => group.id).join().replaceAll(',', '] [').toUpperCase()}]`;
+    },
     async executeQuery() {
       const player = await this.$apollo.query({
         query: gql`
@@ -154,6 +162,9 @@ export default {
             uuid
             lastLogin
             firstLogin
+            groups {
+              id
+            }
             infractions {
               bans {
                 reason
