@@ -148,8 +148,8 @@ export default {
       return (d.getFullYear() === 1969) ? 'Never' : d.toLocaleString();
     },
     getRanks() {
-      if (this.player === undefined || this.player.groups === undefined) {
-        return null;
+      if (this.player === undefined || this.player.groups.length === 0) {
+        return 'None';
       }
       return `[${this.player.groups.map((group) => group.id).join().replaceAll(',', '] [').toUpperCase()}]`;
     },
