@@ -25,28 +25,13 @@
                         v-model="playerInput"
                         @change="playerLookup"
                 ></v-text-field>
-                <!-- <v-spacer style="height:0"></v-spacer> -->
-                <v-btn text icon @click="darkTheme = !darkTheme" style="height:0">
-                    <v-icon style="height:0">invert_colors</v-icon>
-                </v-btn>
-                <v-btn dark style="width:10%;font-size:1">
+                        <v-btn dark style="width:10%;font-size:1">
                     <a href="https://status.tallcraft.com">
                       Server<br>Status
                     </a>
                 </v-btn>
             </v-toolbar>
             <div style="margin:20px"></div>
-            <v-footer dark
-             style="text-align:center;
-                position: fixed;
-                left: 0;
-                bottom: 0;
-                width: 100%;
-                height:35px;">
-              <v-spacer></v-spacer>
-                <h5>Names might not be up to date</h5>
-              <v-spacer></v-spacer>
-            </v-footer>
         </v-app>
     </div>
 </template>
