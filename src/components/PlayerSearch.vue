@@ -116,7 +116,7 @@ export default {
       if (result == null || result.groups.length === 0) {
         return null;
       }
-      return `[${result.groups.map((group) => group.id).join().replaceAll(',', '] [')}]`;
+      return `[${result.groups.map((group) => group.id).join().split(',').join('] [')}]`;
     },
     async executeQuery() {
       this.preTests();
