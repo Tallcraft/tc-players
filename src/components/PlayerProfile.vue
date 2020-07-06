@@ -151,7 +151,8 @@ export default {
       if (this.player === undefined || this.player.groups.length === 0) {
         return 'None';
       }
-      return `[${this.player.groups.map((group) => group.id).join().replaceAll(',', '] [').toUpperCase()}]`;
+      return `[${this.player.groups.map((group) => group.id).join().split(',').join('] [')
+        .toUpperCase()}]`;
     },
     async executeQuery() {
       const player = await this.$apollo.query({
