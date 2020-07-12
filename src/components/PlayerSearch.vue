@@ -2,7 +2,7 @@
   <div>
     <v-progress-linear indeterminate v-show="!Array.isArray(players)"></v-progress-linear>
     <div v-if="players.length == 0 && name!='isuredolovemypotatoes'">
-      <h3 style="text-align:center">No Results.</h3>
+      <h3 style="text-align:center">There were no results for the query : {{name}}</h3>
     </div>
     <div v-if="players.length == 0 && name=='isuredolovemypotatoes'">
       <h3 style="text-align:center">
