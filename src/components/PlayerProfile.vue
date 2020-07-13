@@ -20,6 +20,14 @@
                 loading="Loading Avatar..."
               >
               </v-img>
+              <h3 class="justify-center"
+                style="
+                text-align:center;
+                margin-top:10px"
+                v-if="player.connectedTo!=null"
+                >
+                This User Is Online On {{player.connectedTo.name}}.
+                </h3>
               <div primary-title class="headline">{{player.name}}</div>
               <!-- <v-icon color="accent">perm_identity</v-icon> -->
               <h3 class="justify-center"
@@ -40,6 +48,14 @@
                 v-if="playerHistoryData"
                 >
                 Ban Information
+                </h3>
+                <h3 class="justify-center"
+                style="
+                text-align:center;
+                margin-top:10px"
+                v-if="!playerHistoryData"
+                >
+                This User Has No Bans On Record.
                 </h3>
               <v-data-table
                 :headers="playerHistoryHeader"
@@ -165,6 +181,9 @@ export default {
             firstLogin
             groups {
               id
+            }
+            connectedTo{
+              name
             }
             infractions {
               bans {
