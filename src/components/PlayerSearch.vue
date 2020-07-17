@@ -122,7 +122,7 @@ export default {
       this.preTests();
       this.players = null;
       const players = await this.$apollo.query({
-        query: gql`
+        query: (!this.serverQuery) ? gql`
         query {
           players(searchPlayerName:"%${this.name.replace('_', '\\\\_')}%", limit:20, offset:${(this.page - 1) * 20}){
             lastSeenName
@@ -133,9 +133,26 @@ export default {
               id
             }
           }
-        }`,
+        }` : gql`
+        query{
+        mcServer(serverId:"${this.serverName}"){
+          name
+  status{
+    onlinePlayers{
+                  lastSeenName
+            firstLogin
+            lastLogin
+            uuid
+            groups{
+              id
+            }
+    }
+  }
+}}`,
       });
-      this.players = players.data.players;
+      this.players = (this.serverQuery) ? players.data.mcServer.status.onlinePlayers
+        : players.data.players;
+      this.players = (this.players === null) ? [] : this.players;
       this.checkOneResult();
       this.wait = false;
       return this.players;
@@ -145,11 +162,18 @@ export default {
         this.$router.replace(`/search/${this.name}/page/1`);
         this.page = 1;
       }
+      this.serverQuery = false;
+      this.serverName = '';
       if (this.name.includes(':')) {
         const nme = this.name.split(':');
         if (!Number.isNaN((nme[1] * 1))) {
           [this.name, this.page] = nme;
           this.$router.replace(`/search/${this.name}/page/${this.page}`);
+        }
+        if (nme[0] === ('on')) {
+          this.serverQuery = true;
+          [this.name, this.serverName] = nme;
+          this.name = nme.join(':');
         }
       }
       if (this.name === '') {
