@@ -28,13 +28,16 @@
                 >
                 This User Is Online On {{player.connectedTo.name}}.
                 </h3>
+                <v-divider block style="margin-top:2%;margin-bottom:2%"
+                 v-if="player.connectedTo!=null"></v-divider>
               <div primary-title class="headline">{{player.name}}</div>
               <!-- <v-icon color="accent">perm_identity</v-icon> -->
               <h3 class="justify-center"
                 style="text-align:center;">
                 Name: {{player.lastSeenName}}
                 <br>UUID: {{player.uuid}}
-                <br>Rank(s): {{getRanks()}}</h3>
+                <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
+                Rank(s): {{getRanks()}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <!-- <v-icon class="justify-center" color="accent">date_range</v-icon> -->
               <h3 class="justify-center"
