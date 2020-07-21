@@ -42,7 +42,9 @@
               <!-- <v-icon class="justify-center" color="accent">date_range</v-icon> -->
               <h3 class="justify-center"
                 style="text-align:center;">Last Login: {{playerLastLogin}}
-              <br>First Login: {{playerFirstLogin}}</h3>
+                |  {{moment.unix(player.lastLogin/1000).fromNow()}}
+              <br>First Login: {{playerFirstLogin}}
+                |  {{moment.unix(player.firstLogin/1000).fromNow()}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="
@@ -55,7 +57,8 @@
                 <h3 class="justify-center"
                 style="
                 text-align:center;
-                margin-top:10px"
+                margin-top:10px;
+                margin-bottom:10px;"
                 v-if="!playerHistoryData"
                 >
                 This User Has No Bans On Record.
@@ -150,8 +153,8 @@ export default {
         server: ban.server.name,
         reason: ban.reason,
         staff: ban.staffName,
-        start: this.formatDate(ban.createdAt * 1),
-        end: this.formatDate(ban.expiresAt * 1),
+        start: `${this.formatDate(ban.createdAt * 1)}`,
+        end: `${this.formatDate(ban.expiresAt * 1)}`,
       }));
     },
   },
