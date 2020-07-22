@@ -188,7 +188,7 @@ export default {
       this.$router.push(`/search/${this.name}/page/${(this.page * 1) + amount}`);
     },
     checkOneResult() {
-      if (this.players.length === 1 && this.players !== undefined && this.page === 0) {
+      if (this.players.length === 1 && this.page === '1') {
         this.$router.replace(`/player/${this.players[0].uuid}`);
         return true;
       }
