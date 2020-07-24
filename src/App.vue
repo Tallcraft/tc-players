@@ -18,6 +18,7 @@
                 </router-link>
                 <!-- <v-spacer style="height:0"></v-spacer> -->
                 <v-text-field
+                        autofocus
                         solo-inverted
                         hide-details
                         prepend-inner-icon="search"
