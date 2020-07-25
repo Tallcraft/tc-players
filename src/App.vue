@@ -26,10 +26,8 @@
                         v-model="playerInput"
                         @change="playerLookup"
                 ></v-text-field>
-                        <v-btn dark style="width:10%;font-size:1">
-                    <a href="https://status.tallcraft.com">
+                        <v-btn dark style="width:10%;font-size:1" :href="'https://status.tallcraft.com'">
                       Server<br>Status
-                    </a>
                 </v-btn>
             </v-toolbar>
             <div style="margin:20px"></div>
