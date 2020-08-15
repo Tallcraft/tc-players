@@ -150,7 +150,7 @@ export default {
       if (this.player.infractions.bans.length === 0) return null;
       return this.player.infractions.bans.map((ban) => ({
         active: ban.isActive,
-        server: ban.server.name,
+        server: (ban.server == null) ? 'Tallcraft Network' : ban.server.name,
         reason: ban.reason,
         staff: ban.staffName,
         start: `${this.formatDate(ban.createdAt * 1)}`,
