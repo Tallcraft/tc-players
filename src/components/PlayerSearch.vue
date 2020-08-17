@@ -1,18 +1,23 @@
 <template>
   <div>
-    <v-progress-linear indeterminate v-show="!Array.isArray(players)"></v-progress-linear>
-    <div v-if="players.length == 0 && name!='isuredolovemypotatoes'">
+    <v-progress-linear
+      indeterminate
+      v-show="!Array.isArray(players.result)">
+    </v-progress-linear>
+    <div v-if="players.result.length == 0 && name!='isuredolovemypotatoes'">
       <h3 style="text-align:center">There were no results for the query : {{name}}</h3>
     </div>
-    <div v-if="players.length == 0 && name=='isuredolovemypotatoes'">
+    <div v-if="players.result.length == 0 && name=='isuredolovemypotatoes'">
       <h3 style="text-align:center">
         Well, there were no results, but there are some potatoes lying around in here.
       </h3>
       <v-img src="../assets/potato.png"
        style="width:25%;margin-left:auto;margin-right:auto"></v-img>
     </div>
-    <div v-if="players.length > 0">
-      <h1 v-show="Array.isArray(players)">Search results for '{{name}}' :</h1>
+    <div v-if="players.result.length > 0">
+      <h1 v-show="Array.isArray(players.result)">
+        Search results for '{{name}}' (Page {{page}}/{{Math.ceil(players.totalCount/20)}}) :
+      </h1>
       <div style="display:inline-block;margin-bottom:50px">
         <v-btn
           style="display:inline-block;
@@ -36,7 +41,7 @@
           <p block style="margin:auto">Next</p>
         </v-btn>
       </div>
-      <div block v-for="(player, index) in players" :key="index" class="row">
+      <div block v-for="(player, index) in players.result" :key="index" class="row">
         <v-btn block
           left
           style="display:inline;
@@ -86,8 +91,8 @@ export default {
   },
   computed: {
     nextDisabled() {
-      if (this.players == null) return null;
-      return this.players.length < 20 || this.wait;
+      if (this.players.result == null) return null;
+      return this.players.result.length < 20 || this.wait;
     },
     height() {
       const { body } = document;
@@ -100,7 +105,7 @@ export default {
       if (this.players == null) {
         return 0;
       }
-      return this.players.length;
+      return this.players.result.length;
     },
   },
   methods: {
@@ -112,7 +117,7 @@ export default {
       return d.toLocaleString();
     },
     getRanks(uuid) {
-      const result = this.players.filter((player) => player.uuid === uuid)[0];
+      const result = this.players.result.filter((player) => player.uuid === uuid)[0];
       if (result == null || result.groups.length === 0) {
         return null;
       }
@@ -125,6 +130,8 @@ export default {
         query: (!this.serverQuery) ? gql`
         query {
           players(searchPlayerName:"%${this.name.replace('_', '\\\\_')}%", limit:20, offset:${(this.page - 1) * 20}){
+    totalCount
+    result{
             lastSeenName
             firstLogin
             lastLogin
@@ -133,7 +140,9 @@ export default {
               id
             }
           }
-        }` : gql`
+  }
+}
+        ` : gql`
         query{
         mcServer(serverId:"${this.serverName}"){
           name
@@ -188,7 +197,7 @@ export default {
       this.$router.push(`/search/${this.name}/page/${(this.page * 1) + amount}`);
     },
     checkOneResult() {
-      if (this.players.length === 1 && this.page === '1' && !this.serverQuery) {
+      if (this.players.result.length === 1 && this.page === '1' && !this.serverQuery) {
         this.$router.replace(`/player/${this.players[0].uuid}`);
         return true;
       }
