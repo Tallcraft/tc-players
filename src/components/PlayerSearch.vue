@@ -177,6 +177,8 @@ export default {
         const nme = this.name.split(':');
         if (!Number.isNaN((nme[1] * 1))) {
           [this.name, this.page] = nme;
+          this.page = (this.page > Math.ceil(this.players.totalCount / 20))
+            ? Math.ceil(this.players.totalCount / 20) : this.page;
           this.$router.replace(`/search/${this.name}/page/${this.page}`);
         }
         if (nme[0] === ('on')) {
