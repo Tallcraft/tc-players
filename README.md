@@ -1,5 +1,5 @@
 # tallcraft-player-search
-Here's a [link](https://tallcraft-player-search.netlify.app/).
+Here's a [link](players.tallcraft.com).
 
 ## Project setup
 ```
