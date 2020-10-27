@@ -4,15 +4,8 @@
       indeterminate
       v-show="!Array.isArray(players.result)">
     </v-progress-linear>
-    <div v-if="players.result.length == 0 && name!='isuredolovemypotatoes'">
+    <div v-if="players.result.length == 0">
       <h3 style="text-align:center">There were no results for the query : {{name}}</h3>
-    </div>
-    <div v-if="players.result.length == 0 && name=='isuredolovemypotatoes'">
-      <h3 style="text-align:center">
-        Well, there were no results, but there are some potatoes lying around in here.
-      </h3>
-      <v-img src="../assets/potato.png"
-       style="width:25%;margin-left:auto;margin-right:auto"></v-img>
     </div>
     <div v-if="players.result.length > 0">
       <h1 v-show="Array.isArray(players.result)">
@@ -200,7 +193,7 @@ export default {
     },
     checkOneResult() {
       if (this.players.result.length === 1 && this.page === '1' && !this.serverQuery) {
-        this.$router.replace(`/player/${this.players[0].uuid}`);
+        this.$router.replace(`/player/${this.players.result[0].uuid}`);
         return true;
       }
       return false;
