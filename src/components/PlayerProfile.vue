@@ -42,9 +42,9 @@
               <!-- <v-icon class="justify-center" color="accent">date_range</v-icon> -->
               <h3 class="justify-center"
                 style="text-align:center;">Last Login: {{playerLastLogin}}
-                |  {{fromNow(player.lastLogin)}}
+                |  {{countdown(new Date(), player.lastLogin,countdown.ALL,3)}}
               <br>First Login: {{playerFirstLogin}}
-                |  {{fromNow(player.firstLogin)}}</h3>
+                |  {{countdown(new Date(), player.firstLogin,countdown.ALL,3)}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="
@@ -162,57 +162,6 @@ export default {
     $route: 'executeQuery',
   },
   methods: {
-    fromNow(date) {
-      const diff = Math.floor(Date.now() - date);
-      const minute = 1000 * 60;
-
-      let minutes = Math.floor(diff / minute);
-      let hours = Math.floor(minutes / 60);
-      let days = Math.floor(hours / 24);
-      let months = Math.floor(days / 31);
-      const years = Math.floor(months / 12);
-
-      minutes -= hours * 60;
-      hours -= days * 24;
-      days -= months * 31;
-      months -= (years * 12);
-
-      let message = '';
-      let terms = 0;
-      if (years > 0) {
-        message += `${years} Years `;
-        terms += 1;
-      }
-      if (months > 0) {
-        if (days === 0 && years > 0) {
-          message += 'and ';
-        }
-        message += `${months + 1} Months `;
-        terms += 1;
-      }
-      if (days > 0) {
-        if (years + months > 0) {
-          message += 'and ';
-        }
-        message += `${days} Days `;
-        terms += 1;
-      }
-      if (hours > 0 && terms < 3) {
-        if (terms > 0 && (minutes === 0 || terms === 2)) {
-          message += 'and ';
-        }
-        message += `${hours} Hours `;
-        terms += 1;
-      }
-      if (minutes > 0 && terms < 3) {
-        if (terms > 0) {
-          message += 'and ';
-        }
-        message += `${minutes} Minutes `;
-      }
-      message += 'ago';
-      return message;
-    },
     formatDate(date) {
       if (date == null) {
         return '-';
