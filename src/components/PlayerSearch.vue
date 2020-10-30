@@ -152,8 +152,17 @@ export default {
   }
 }}`,
       });
-      this.players = (this.serverQuery) ? players.data.mcServer.status.onlinePlayers
-        : players.data.players;
+      if (this.serverQuery) {
+        this.players = {};
+        if (players.data.mcServer.status.onlinePlayers === null) {
+          this.players.result = [];
+        } else {
+          this.players.result = players.data.mcServer.status.onlinePlayers;
+          this.players.totalCount = players.data.mcServer.status.onlinePlayers.length;
+        }
+      } else {
+        this.players = players.data.players;
+      }
       this.players = (this.players === null) ? [] : this.players;
       this.checkOneResult();
       this.wait = false;

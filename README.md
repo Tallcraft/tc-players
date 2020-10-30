@@ -1,6 +1,3 @@
-# tallcraft-player-search
-Here's a [link](players.tallcraft.com).
-
 ## Project setup
 ```
 npm install
