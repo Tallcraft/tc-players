@@ -33,18 +33,20 @@
               <div primary-title class="headline">{{player.name}}</div>
               <!-- <v-icon color="accent">perm_identity</v-icon> -->
               <h3 class="justify-center"
-                style="text-align:center;">
+                  style="text-align:center;">
                 Name: {{player.lastSeenName}}
-                <br>UUID: {{player.uuid}}
-                <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
-                Rank(s): {{getRanks()}}</h3>
+                <br>UUID: {{player.uuid}}</h3>
+              <v-divider block style="margin-top:2%;margin-bottom:2%"
+                v-if="getRanks()!=null"></v-divider>
+              <h3 class="justify-center"
+                style="text-align:center;"
+                v-if="getRanks()!=null">Rank(s): {{getRanks()}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
-              <!-- <v-icon class="justify-center" color="accent">date_range</v-icon> -->
               <h3 class="justify-center"
                 style="text-align:center;">Last Login: {{playerLastLogin}}
-                |  {{countdown(new Date(), player.lastLogin,valid,3)}}
+                |  {{countdown(new Date(), player.lastLogin, valid, 3)}}
               <br>First Login: {{playerFirstLogin}}
-                |  {{countdown(new Date(), player.firstLogin,valid,3)}}</h3>
+                |  {{countdown(new Date(), player.firstLogin, valid, 3)}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="
@@ -180,9 +182,8 @@ export default {
       return (d.getFullYear() < 2000) ? 'Never' : d.toLocaleString();
     },
     getRanks() {
-      if (this.player === undefined || this.player.groups === undefined) {
-        return 'None';
-      }
+      if (this.player === undefined || this.player.groups === undefined) return null;
+      if (this.player.groups.length === 0) return null;
       return `[${this.player.groups.map((group) => group.id).join().split(',').join('] [')
         .toUpperCase()}]`;
     },
