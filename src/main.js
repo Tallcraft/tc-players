@@ -1,6 +1,5 @@
 import 'babel-polyfill';
 import Vue from 'vue';
-import countdown from 'countdown';
 import { ApolloClient } from 'apollo-boost';
 import App from '@/App.vue';
 import VueApollo from 'vue-apollo';
@@ -39,13 +38,11 @@ Vue.config.productionTip = false;
 
 Vue.prototype.$appName = 'Tallcraft Players';
 Vue.prototype.$apollo = client;
-Vue.prototype.countdown = countdown;
 Vue.prototype.$clone = (obj) => JSON.parse(JSON.stringify(obj));
 
 new Vue({
   router,
   apolloProvider,
   vuetify,
-  countdown,
   render: (h) => h(App),
 }).$mount('#app');

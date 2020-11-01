@@ -44,9 +44,9 @@
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="text-align:center;">Last Login: {{playerLastLogin}}
-                |  {{countdown(new Date(), player.lastLogin, valid, 3)}}
+                |  {{fromNow(player.lastLogin)}}
               <br>First Login: {{playerFirstLogin}}
-                |  {{countdown(new Date(), player.firstLogin, valid, 3)}}</h3>
+                |  {{fromNow(player.firstLogin)}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="
@@ -80,6 +80,7 @@
 
 <script>
 import gql from 'graphql-tag';
+import countdown from 'countdown';
 
 // TODO: allow providing either name or uuid as prop
 export default {
@@ -128,16 +129,6 @@ export default {
     };
   },
   computed: {
-    valid() {
-      // eslint-disable-next-line no-bitwise
-      return this.countdown.YEARS
-      | this.countdown.MONTHS
-      | this.countdown.WEEKS
-      | this.countdown.DAYS
-      | this.countdown.HOURS
-      | this.countdown.MINUTES
-      | this.countdown.SECONDS;
-    },
     playerNotFound() {
       if (this.player === undefined) {
         return false;
@@ -174,6 +165,9 @@ export default {
     $route: 'executeQuery',
   },
   methods: {
+    fromNow(date) {
+      return `About ${countdown(new Date(), date, countdown.ALL, 1)} ago`;
+    },
     formatDate(date) {
       if (date == null) {
         return '-';
