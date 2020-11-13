@@ -166,14 +166,14 @@ export default {
   },
   methods: {
     fromNow(date) {
-      return `About ${countdown(new Date(), date, countdown.ALL, 1)} ago`;
+      return `${countdown(new Date(), date, countdown.ALL, 1)} ago`;
     },
     formatDate(date) {
-      if (date == null) {
+      if (!date) {
         return '-';
       }
       const d = new Date(date);
-      return (d.getFullYear() < 2000) ? 'Never' : d.toLocaleString();
+      return d.toLocaleString();
     },
     getRanks() {
       if (this.player === undefined || this.player.groups === undefined) return null;
