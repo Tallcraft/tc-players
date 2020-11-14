@@ -36,11 +36,9 @@
                   style="text-align:center;">
                 Name: {{player.lastSeenName}}
                 <br>UUID: {{player.uuid}}</h3>
-              <v-divider block style="margin-top:2%;margin-bottom:2%"
-                v-if="getRanks()!=null"></v-divider>
+              <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
-                style="text-align:center;"
-                v-if="getRanks()!=null">Rank(s): {{getRanks()}}</h3>
+                style="text-align:center;">Rank(s): {{getRanks()}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="text-align:center;">Last Login: {{playerLastLogin}}
@@ -176,8 +174,7 @@ export default {
       return d.toLocaleString();
     },
     getRanks() {
-      if (this.player === undefined || this.player.groups === undefined) return null;
-      if (this.player.groups.length === 0) return null;
+      if (this.player?.groups?.length === 0) return 'None';
       return `[${this.player.groups.map((group) => group.id).join().split(',').join('] [')
         .toUpperCase()}]`;
     },
