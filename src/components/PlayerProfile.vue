@@ -146,9 +146,11 @@ export default {
       return this.formatDate(this.player.lastLogin * 1);
     },
     playerRanks() {
-      if (!this.player?.groups) return 'None';
-      if (this.player.groups.length === 0) return 'None';
-      return `[${this.player.groups.map((group) => group.id).join().split(',').join('] [')
+      if (!this.player?.groups?.length) return 'None';
+      return `[${this.player.groups.map((group) => group.id)
+        .join()
+        .split(',')
+        .join('] [')
         .toUpperCase()}]`;
     },
     playerHistoryData() {
