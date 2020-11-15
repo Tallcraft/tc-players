@@ -38,7 +38,7 @@
                 <br>UUID: {{player.uuid}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
-                style="text-align:center;">Rank(s): {{getRanks()}}</h3>
+                style="text-align:center;">Rank(s): {{playerRanks}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="text-align:center;">Last Login: {{playerLastLogin}}
@@ -145,6 +145,11 @@ export default {
     playerLastLogin() {
       return this.formatDate(this.player.lastLogin * 1);
     },
+    playerRanks() {
+      if (this.player?.groups?.length === 0) return 'None';
+      return `[${this.player.groups.map((group) => group.id).join().split(',').join('] [')
+        .toUpperCase()}]`;
+    },
     playerHistoryData() {
       if (this.player === null || this.player === undefined) return null;
       if (this.player.infractions === undefined) return null;
@@ -172,11 +177,6 @@ export default {
       }
       const d = new Date(date);
       return d.toLocaleString();
-    },
-    getRanks() {
-      if (this.player?.groups?.length === 0) return 'None';
-      return `[${this.player.groups.map((group) => group.id).join().split(',').join('] [')
-        .toUpperCase()}]`;
     },
     async executeQuery() {
       const player = await this.$apollo.query({
