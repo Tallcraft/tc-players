@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img src="/logo.png" style="display:block;
+    <img alt="Tallcraft Players Logo" :src="logoSrc" style="display:block;
               margin-left:auto;
               margin-right:auto;
               margin-top:3%;
@@ -27,6 +27,7 @@
 <script>
 
 import gql from 'graphql-tag';
+import logo from '../assets/logo.png';
 
 export default {
   name: 'MainView',
@@ -65,6 +66,9 @@ export default {
     },
     getName(name) {
       return `players/${name}`;
+    },
+    logoSrc() {
+      return logo;
     },
   },
   methods: {
