@@ -1,17 +1,15 @@
 <template>
     <v-layout row>
         <v-flex xs12 sm6 offset-sm3>
-            <v-progress-linear indeterminate
-              v-show="player.firstLogin == undefined || playerNotFound"></v-progress-linear>
-            <v-card v-if="name == null || name === ''">
-                <h3 class="justify-center"
-               style="text-align:center;">Please provide a UUID.</h3>
-            </v-card>
-            <v-card v-else-if="playerNotFound">
+            <v-card v-if="name == ''">
               <h3 class="justify-center"
-               style="text-align:center;">Could not find a player with the uuid <br>'{{name}}'</h3>
+              style="text-align:center;">Please provide a UUID.</h3>
             </v-card>
-            <v-card inline v-else-if="player != null">
+            <v-card v-else-if="player == null">
+              <h3 class="justify-center"
+              style="text-align:center;">Player not found.</h3>
+            </v-card>
+            <v-card inline v-else>
               <v-img
                 :src="playerAvatarUrl"
                 class="justify-center"
@@ -20,16 +18,7 @@
                 loading="Loading Avatar..."
               >
               </v-img>
-              <h3 class="justify-center"
-                style="
-                text-align:center;
-                margin-top:10px"
-                v-if="player.connectedTo!=null"
-                >
-                This User Is Online On {{player.connectedTo.name}}.
-                </h3>
-                <v-divider block style="margin-top:2%;margin-bottom:2%"
-                 v-if="player.connectedTo!=null"></v-divider>
+              <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <div primary-title class="headline">{{player.name}}</div>
               <!-- <v-icon color="accent">perm_identity</v-icon> -->
               <h3 class="justify-center"
@@ -37,8 +26,15 @@
                 Name: {{player.lastSeenName}}
                 <br>UUID: {{player.uuid}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
-              <h3 class="justify-center"
-                style="text-align:center;">Rank(s): {{playerRanks}}</h3>
+              <div
+                class="text-center"
+                id="ranksList">
+                  <v-chip class="ma-2"
+                    v-for="(rank) in playerRanks"
+                    :key="rank">
+                      {{rank}}
+                    </v-chip>
+              </div>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="text-align:center;">Last Login: {{playerLastLogin}}
@@ -71,6 +67,7 @@
                 class="elevation-1"
               >
               </v-data-table>
+              <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
             </v-card>
         </v-flex>
     </v-layout>
@@ -127,12 +124,6 @@ export default {
     };
   },
   computed: {
-    playerNotFound() {
-      if (this.player === undefined) {
-        return false;
-      }
-      return this.player == null;
-    },
     playerAvatarUrl() {
       if (this.player == null) {
         return '';
@@ -146,17 +137,11 @@ export default {
       return this.formatDate(this.player.lastLogin * 1);
     },
     playerRanks() {
-      if (!this.player?.groups?.length) return 'None';
-      return `[${this.player.groups.map((group) => group.id)
-        .join()
-        .split(',')
-        .join('] [')
-        .toUpperCase()}]`;
+      if (!this.player?.groups?.length) return ['None'];
+      return this.player.groups.map((group) => group.id.toUpperCase());
     },
     playerHistoryData() {
-      if (this.player === null || this.player === undefined) return null;
-      if (this.player.infractions === undefined) return null;
-      if (this.player.infractions.bans.length === 0) return null;
+      if (!this.player?.infractions?.bans?.length) return null;
       return this.player.infractions.bans.map((ban) => ({
         active: ban.isActive,
         server: (ban.server == null) ? 'Tallcraft Network' : ban.server.name,
