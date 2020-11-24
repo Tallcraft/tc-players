@@ -33,18 +33,18 @@
               <div primary-title class="headline">{{player.name}}</div>
               <!-- <v-icon color="accent">perm_identity</v-icon> -->
               <h3 class="justify-center"
-                style="text-align:center;">
+                  style="text-align:center;">
                 Name: {{player.lastSeenName}}
-                <br>UUID: {{player.uuid}}
-                <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
-                Rank(s): {{getRanks()}}</h3>
+                <br>UUID: {{player.uuid}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
-              <!-- <v-icon class="justify-center" color="accent">date_range</v-icon> -->
+              <h3 class="justify-center"
+                style="text-align:center;">Rank(s): {{playerRanks}}</h3>
+              <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="text-align:center;">Last Login: {{playerLastLogin}}
-                |  {{moment.unix(player.lastLogin/1000).fromNow()}}
+                |  {{fromNow(player.lastLogin)}}
               <br>First Login: {{playerFirstLogin}}
-                |  {{moment.unix(player.firstLogin/1000).fromNow()}}</h3>
+                |  {{fromNow(player.firstLogin)}}</h3>
               <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
               <h3 class="justify-center"
                 style="
@@ -78,6 +78,7 @@
 
 <script>
 import gql from 'graphql-tag';
+import countdown from 'countdown';
 
 // TODO: allow providing either name or uuid as prop
 export default {
@@ -144,6 +145,14 @@ export default {
     playerLastLogin() {
       return this.formatDate(this.player.lastLogin * 1);
     },
+    playerRanks() {
+      if (!this.player?.groups?.length) return 'None';
+      return `[${this.player.groups.map((group) => group.id)
+        .join()
+        .split(',')
+        .join('] [')
+        .toUpperCase()}]`;
+    },
     playerHistoryData() {
       if (this.player === null || this.player === undefined) return null;
       if (this.player.infractions === undefined) return null;
@@ -162,19 +171,15 @@ export default {
     $route: 'executeQuery',
   },
   methods: {
+    fromNow(date) {
+      return `${countdown(new Date(), date, countdown.ALL, 1)} ago`;
+    },
     formatDate(date) {
-      if (date == null) {
+      if (!date) {
         return '-';
       }
       const d = new Date(date);
-      return (d.getFullYear() === 1969) ? 'Never' : d.toLocaleString();
-    },
-    getRanks() {
-      if (this.player === undefined || this.player.groups.length === 0) {
-        return 'None';
-      }
-      return `[${this.player.groups.map((group) => group.id).join().split(',').join('] [')
-        .toUpperCase()}]`;
+      return d.toLocaleString();
     },
     async executeQuery() {
       const player = await this.$apollo.query({
