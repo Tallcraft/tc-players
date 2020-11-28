@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-layout row wrap align-center>
-            <v-flex class="text-xs-center">
+            <v-flex class="text-center">
                 <h1> {{ errCode }} <br> {{ err }} </h1>
                 <h4 class="soothing-msg">Have a squid for your woes</h4>
                 <img style = "margin:20px" :src="squidSrc">
