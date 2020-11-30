@@ -21,7 +21,7 @@
               </v-img>
                <v-list-item v-if="player.connectedTo" flat>
                 <v-list-item-icon class="justify-center">
-                  <v-icon>done_outline</v-icon>
+                  <v-icon color="green">done_outline</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>Online On</b>
@@ -30,7 +30,7 @@
                </v-list-item>
               <v-list-item v-else flat>
                 <v-list-item-icon class="justify-center">
-                  <v-icon>clear</v-icon>
+                  <v-icon color="red">clear</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>Offline</b>
@@ -38,7 +38,7 @@
                </v-list-item>
               <v-list-item flat>
                 <v-list-item-icon class="justify-center">
-                  <v-icon>perm_identity</v-icon>
+                  <v-icon color="light-blue">perm_identity</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>Name</b>
@@ -47,7 +47,7 @@
                </v-list-item>
               <v-list-item flat>
                 <v-list-item-icon>
-                  <v-icon>perm_identity</v-icon>
+                  <v-icon color="#042f94">perm_identity</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>UUID</b>
@@ -56,7 +56,7 @@
               </v-list-item>
               <v-list-item flat v-if="player.groups.length">
                 <v-list-item-icon>
-                  <v-icon>star_border</v-icon>
+                  <v-icon color="yellow">star_border</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>Ranks</b>
@@ -71,7 +71,7 @@
               </v-list-item>
               <v-list-item flat v-else>
                 <v-list-item-icon>
-                  <v-icon>star_border</v-icon>
+                  <v-icon color="yellow">star_border</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>No Ranks</b>
@@ -79,7 +79,7 @@
               </v-list-item>
               <v-list-item flat>
                 <v-list-item-icon>
-                  <v-icon>schedule</v-icon>
+                  <v-icon color="#6e9160">schedule</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>First Login</b>
@@ -89,7 +89,7 @@
               </v-list-item>
               <v-list-item flat>
                 <v-list-item-icon>
-                  <v-icon>schedule</v-icon>
+                  <v-icon color="#a8636b">schedule</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>Last Login</b>

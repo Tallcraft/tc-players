@@ -3,7 +3,7 @@
     <v-list>
         <v-list-item>
           <v-list-item-icon>
-            <v-icon>help</v-icon>
+            <v-icon color="#8492e8">help</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <b>Active</b>
@@ -12,7 +12,7 @@
         </v-list-item>
         <v-list-item>
           <v-list-item-icon>
-            <v-icon>dns</v-icon>
+            <v-icon color="grey">dns</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <b>Server</b>
@@ -21,7 +21,7 @@
         </v-list-item>
         <v-list-item>
           <v-list-item-icon>
-            <v-icon>schedule</v-icon>
+            <v-icon color="#6e9160">schedule</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <b>Created</b>
@@ -30,7 +30,7 @@
         </v-list-item>
         <v-list-item>
           <v-list-item-icon>
-            <v-icon>schedule</v-icon>
+            <v-icon color="#a8636b">schedule</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <b>Expires</b>

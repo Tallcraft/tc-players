@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panel>
     <v-expansion-panel-header class="justify-space-between flex-wrap" expand-icon="expand_less">
-      <v-icon class="flex-grow-0 pr-4">report</v-icon>
+      <v-icon color="red" class="flex-grow-0 pr-4">report</v-icon>
       <b>{{ban.reason}}</b>
        <v-chip class="flex-grow-0 playerCounter mr-4">
         {{ban.staff}}
