@@ -3,38 +3,38 @@
     <v-list>
         <v-list-item>
           <v-list-item-icon>
-            <v-icon color="#8492e8">help</v-icon>
+            <v-icon>help</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <b>Active</b>
-            {{ban.active}}
+            {{isBanActive}}
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-icon>
-            <v-icon color="grey">dns</v-icon>
+            <v-icon>dns</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <b>Server</b>
-            {{ban.server}}
+            {{banServer}}
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-icon>
-            <v-icon color="#6e9160">schedule</v-icon>
+            <v-icon>schedule</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <b>Created</b>
-            {{ban.start}}
+            {{banStart}}
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-icon>
-            <v-icon color="#a8636b">schedule</v-icon>
+            <v-icon>schedule</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <b>Expires</b>
-            {{ban.end}}
+            {{banEnd}}
           </v-list-item-content>
         </v-list-item>
     </v-list>
@@ -45,12 +45,22 @@
 export default {
   name: 'BanDetail',
   props: {
-    ban: {
-      type: Object,
+    isBanActive: {
+      type: Boolean,
+      required: true,
+    },
+    banServer: {
+      type: String,
+      required: true,
+    },
+    banStart: {
+      type: String,
+      required: true,
+    },
+    banEnd: {
+      type: String,
       required: true,
     },
   },
 };
 </script>
-<style scoped>
-</style>

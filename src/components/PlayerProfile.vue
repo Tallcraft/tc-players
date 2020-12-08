@@ -13,15 +13,15 @@
             <v-list v-else>
               <v-img
                 :src="playerAvatarUrl"
-                class="justify-center"
                 style="width:50%;
                 left:25%"
                 loading="Loading Avatar..."
               >
               </v-img>
+              <h1 class="text-center">{{player.lastSeenName}}</h1>
                <v-list-item v-if="player.connectedTo" flat>
                 <v-list-item-icon class="justify-center">
-                  <v-icon color="green">done_outline</v-icon>
+                  <v-icon>done_outline</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>Online On</b>
@@ -30,40 +30,32 @@
                </v-list-item>
               <v-list-item v-else flat>
                 <v-list-item-icon class="justify-center">
-                  <v-icon color="red">clear</v-icon>
+                  <v-icon>clear</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>Offline</b>
                 </v-list-item-content>
                </v-list-item>
               <v-list-item flat>
-                <v-list-item-icon class="justify-center">
-                  <v-icon color="light-blue">perm_identity</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>Name</b>
-                  {{player.lastSeenName}}
-                </v-list-item-content>
-               </v-list-item>
-              <v-list-item flat>
                 <v-list-item-icon>
-                  <v-icon color="#042f94">perm_identity</v-icon>
+                  <v-icon>perm_identity</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>UUID</b>
                   {{player.uuid}}
                 </v-list-item-content>
               </v-list-item>
-              <v-list-item flat v-if="player.groups.length">
+              <v-list-item flat v-if="player.groups!=null">
                 <v-list-item-icon>
-                  <v-icon color="yellow">star_border</v-icon>
+                  <v-icon>star_border</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>Ranks</b>
                   <div>
                   <v-chip
                     v-for="(rank) in playerRanks"
-                    :key="rank">
+                    :key="rank"
+                    class="mr-4">
                       {{rank}}
                     </v-chip>
                   </div>
@@ -71,7 +63,7 @@
               </v-list-item>
               <v-list-item flat v-else>
                 <v-list-item-icon>
-                  <v-icon color="yellow">star_border</v-icon>
+                  <v-icon>star_border</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>No Ranks</b>
@@ -79,7 +71,7 @@
               </v-list-item>
               <v-list-item flat>
                 <v-list-item-icon>
-                  <v-icon color="#6e9160">schedule</v-icon>
+                  <v-icon>schedule</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>First Login</b>
@@ -89,7 +81,7 @@
               </v-list-item>
               <v-list-item flat>
                 <v-list-item-icon>
-                  <v-icon color="#a8636b">schedule</v-icon>
+                  <v-icon>schedule</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <b>Last Login</b>
@@ -97,6 +89,7 @@
                 <br>{{fromNow(player.lastLogin)}}
                 </v-list-item-content>
               </v-list-item>
+              <div v-if="player.infractions!=null">
               <v-list-item v-if="player.infractions.bans.length" flat>
                 <v-list-item-icon>
                   <v-icon>account_balance</v-icon>
@@ -105,22 +98,19 @@
                   <b>Bans</b>
                    <v-expansion-panels multiple>
                   <BanListItem
-                    v-for="ban in playerBans"
-                    :key="ban"
-                    :ban="ban">
+                    v-for="(ban, i) in playerBans"
+                    :key="i"
+                    :banStaff="ban.staff"
+                    :banReason="ban.reason"
+                    :isBanActive="ban.active"
+                    :banServer="ban.server"
+                    :banStart="ban.start"
+                    :banEnd="ban.end">
                   </BanListItem>
                    </v-expansion-panels>
-                  <!--
-                  <v-data-table
-                    :headers="playerHistoryHeader"
-                    :items="playerHistoryData"
-                    v-if="playerHistoryData"
-                    hide-default-footer
-                    class="elevation-1"
-                  >
-                  </v-data-table> -->
                 </v-list-item-content>
               </v-list-item>
+              </div>
             </v-list>
         </v-flex>
     </v-layout>

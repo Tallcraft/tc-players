@@ -1,13 +1,15 @@
 <template>
-  <div>
+  <div v-if="players!=null">
     <v-progress-linear
       indeterminate
       v-show="!Array.isArray(players.result)">
     </v-progress-linear>
-    <div v-if="players.result.length == 0">
+    <div
+     v-if="players.result == undefined || players.result.length==0"
+     v-show="Array.isArray(players.result)">
       <h3 style="text-align:center">There were no results for the query : {{name}}</h3>
     </div>
-    <div v-if="players.result.length > 0">
+    <div v-else>
       <h1 v-show="Array.isArray(players.result)">
         Search results for '{{name}}' (Page {{page}}/{{Math.ceil(players.totalCount/20)}}) :
       </h1>
@@ -35,12 +37,12 @@
         </v-btn>
       </div>
       <v-list>
-        <v-list-item-group>
+        <v-list-item-group  v-if="players.result!=undefined">
           <v-list-item
            v-for="(player, index) in players.result"
            :key="index"
            class="row"
-           @click.native="$router.push(`/player/${player.uuid}`)">
+           :to="`/player/${player.uuid}`">
                 <v-list-item-icon class="justify-center">
                   <v-icon color="light-blue">perm_identity</v-icon>
                 </v-list-item-icon>
@@ -119,7 +121,11 @@ export default {
       if (result == null || result.groups.length === 0) {
         return null;
       }
-      return `[${result.groups.map((group) => group.id).join().split(',').join('] [')}]`;
+      return `[${result.groups.map((group) => group.id)
+        .join()
+        .split(',')
+        .join('] [')
+        .toUpperCase()}]`;
     },
     async executeQuery() {
       this.preTests();
@@ -128,34 +134,35 @@ export default {
         query: (!this.serverQuery) ? gql`
         query {
           players(searchPlayerName:"%${this.name.replace('_', '\\\\_')}%", limit:20, offset:${(this.page - 1) * 20}){
-    totalCount
-    result{
-            lastSeenName
-            firstLogin
-            lastLogin
-            uuid
-            groups{
-              id
+            totalCount
+            result{
+              lastSeenName
+              firstLogin
+              lastLogin
+              uuid
+              groups{
+                id
+              }
             }
           }
-  }
-}
+        }
         ` : gql`
         query{
-        mcServer(serverId:"${this.serverName}"){
-          name
-  status{
-    onlinePlayers{
-                  lastSeenName
-            firstLogin
-            lastLogin
-            uuid
-            groups{
-              id
+          mcServer(serverId:"${this.serverName}"){
+            name
+            status{
+              onlinePlayers{
+                lastSeenName
+                firstLogin
+                lastLogin
+                uuid
+                groups{
+                  id
+                }
+              }
             }
-    }
-  }
-}}`,
+          }
+        }`,
       });
       if (this.serverQuery) {
         this.players = {};
@@ -176,7 +183,6 @@ export default {
     preTests() {
       if ((this.page * 1) < 1) {
         this.$router.replace(`/search/${this.name}/page/1`);
-        this.page = 1;
       }
       this.serverQuery = false;
       this.serverName = '';
@@ -184,9 +190,8 @@ export default {
         const nme = this.name.split(':');
         if (!Number.isNaN((nme[1] * 1))) {
           [this.name, this.page] = nme;
-          this.page = (this.page > Math.ceil(this.players.totalCount / 20))
-            ? Math.ceil(this.players.totalCount / 20) : this.page;
-          this.$router.replace(`/search/${this.name}/page/${this.page}`);
+          this.$router.replace(`/search/${this.name}/page/${(this.page > Math.ceil(this.players.totalCount / 20))
+            ? Math.ceil(this.players.totalCount / 20) : this.page}`);
         }
         if (nme[0] === ('on')) {
           this.serverQuery = true;
