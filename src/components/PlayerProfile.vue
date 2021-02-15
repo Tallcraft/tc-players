@@ -1,6 +1,5 @@
 <template>
-    <v-layout row>
-        <v-flex xs12 sm8 offset-sm2>
+        <v-flex>
            <v-progress-linear indeterminate v-if="player == null"></v-progress-linear>
             <v-card v-if="name == ''">
               <h3 class="justify-center"
@@ -10,93 +9,55 @@
               <h3 class="justify-center"
               style="text-align:center;">Player not found.</h3>
             </v-card>
-            <v-list v-else>
               <v-img
                 :src="playerAvatarUrl"
-                style="width:50%;
-                left:25%"
+                style="width:20%;
+                left:40%"
                 loading="Loading Avatar..."
               >
               </v-img>
-              <h1 class="text-center">{{player.lastSeenName}}</h1>
-               <v-list-item v-if="player.connectedTo" flat>
-                <v-list-item-icon class="justify-center">
-                  <v-icon>done_outline</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>Online On</b>
-                  {{player.connectedTo.name}}
-                </v-list-item-content>
-               </v-list-item>
-              <v-list-item v-else flat>
-                <v-list-item-icon class="justify-center">
-                  <v-icon>clear</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>Offline</b>
-                </v-list-item-content>
-               </v-list-item>
-              <v-list-item flat>
-                <v-list-item-icon>
-                  <v-icon>perm_identity</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>UUID</b>
-                  {{player.uuid}}
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item flat v-if="player.groups!=null">
-                <v-list-item-icon>
-                  <v-icon>star_border</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>Ranks</b>
-                  <div>
-                  <v-chip
-                    v-for="(rank) in playerRanks"
-                    :key="rank"
-                    class="mr-4">
-                      {{rank}}
-                    </v-chip>
-                  </div>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item flat v-else>
-                <v-list-item-icon>
-                  <v-icon>star_border</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>No Ranks</b>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item flat>
-                <v-list-item-icon>
-                  <v-icon>schedule</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>First Login</b>
-                  {{playerFirstLogin}}
-                <br>{{fromNow(player.firstLogin)}}
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item flat>
-                <v-list-item-icon>
-                  <v-icon>schedule</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>Last Login</b>
-                  {{playerLastLogin}}
-                <br>{{fromNow(player.lastLogin)}}
-                </v-list-item-content>
-              </v-list-item>
-              <div v-if="player.infractions!=null">
-              <v-list-item v-if="player.infractions.bans.length" flat>
-                <v-list-item-icon>
-                  <v-icon>account_balance</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>Bans</b>
-                   <v-expansion-panels multiple>
+              <h1 class="text-center">
+                <v-icon :color="`${(player.connectedTo!=null)?'green':'red'}`">
+                  fiber_manual_record
+                </v-icon>
+                {{player.lastSeenName}}
+              </h1>
+              <h2 class="text-center">
+                <v-icon>perm_identity</v-icon>
+                {{player.uuid}}
+              </h2>
+              <v-divider style="margin-top:10px;margin-bottom:10px"></v-divider>
+              <h2 class="text-center"  v-if="player.groups.length!=0">
+                <v-icon>star_border</v-icon>
+                <b style="margin-right:20px"> Ranks</b>
+                <v-chip
+                  v-for="(rank) in playerRanks"
+                  :key="rank"
+                  class="mr-4">
+                    {{rank}}
+                  </v-chip>
+              </h2>
+              <h2 v-else class="text-center">
+                <v-icon>star_border</v-icon>
+                <b style="margin-right:20px"> User Has No Ranks</b>
+              </h2>
+              <v-divider style="margin-top:10px;margin-bottom:10px"></v-divider>
+              <h2 class="text-center">
+                <v-icon>schedule</v-icon>
+                <b> First Login</b>
+                {{playerFirstLogin}} | {{fromNow(player.firstLogin)}}
+              </h2>
+              <h2 class="text-center">
+                <v-icon>schedule</v-icon>
+                <b> Lest Login</b>
+                {{playerLastLogin}} | {{fromNow(player.lastLogin)}}
+              </h2>
+              <v-divider style="margin-top:10px;margin-bottom:10px"
+               v-if="player.infractions.bans.length!=0"></v-divider>
+              <h2 class="text-center" v-if="player.infractions.bans.length!=0">
+                <v-icon>account_balance</v-icon>
+                <b> Bans</b>
+                <v-expansion-panels multiple>
                   <BanListItem
                     v-for="(ban, i) in playerBans"
                     :key="i"
@@ -107,13 +68,9 @@
                     :banStart="ban.start"
                     :banEnd="ban.end">
                   </BanListItem>
-                   </v-expansion-panels>
-                </v-list-item-content>
-              </v-list-item>
-              </div>
-            </v-list>
+                </v-expansion-panels>
+              </h2>
         </v-flex>
-    </v-layout>
 </template>
 
 <script>
