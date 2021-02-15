@@ -36,22 +36,18 @@
           <p block style="margin:auto">Next</p>
         </v-btn>
       </div>
-      <v-list>
-        <v-list-item-group  v-if="players.result!=undefined">
-          <v-list-item
-           v-for="(player, index) in players.result"
-           :key="index"
-           class="row"
-           :to="`/player/${player.uuid}`">
-                <v-list-item-icon class="justify-center">
-                  <v-icon color="light-blue">perm_identity</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <b>{{getRanks(player.uuid)}} {{player.lastSeenName}}</b>
-                </v-list-item-content>
-          </v-list-item>
-          </v-list-item-group>
-      </v-list>
+      <div block v-for="(player, index) in players.result" :key="index" class="row">
+        <v-btn block
+          left
+          style="display:inline;
+          width:100%;
+          height:20;"
+          class="btn-text"
+          @click.native="$router.push(`/player/${player.uuid}`)">
+          <v-icon>perm_identity</v-icon>
+          <p block style="margin:auto">{{getRanks(player.uuid)}} {{player.lastSeenName}}</p>
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -118,7 +114,7 @@ export default {
     },
     getRanks(uuid) {
       const result = this.players.result.filter((player) => player.uuid === uuid)[0];
-      if (result == null || result.groups.length === 0) {
+      if (result == null || result.groups?.length === 0) {
         return null;
       }
       return `[${result.groups.map((group) => group.id)

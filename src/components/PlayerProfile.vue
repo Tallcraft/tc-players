@@ -27,7 +27,7 @@
                 {{player.uuid}}
               </h2>
               <v-divider style="margin-top:10px;margin-bottom:10px"></v-divider>
-              <h2 class="text-center"  v-if="player.groups.length!=0">
+              <h2 class="text-center"  v-if="!noGroups()">
                 <v-icon>star_border</v-icon>
                 <b style="margin-right:20px"> Ranks</b>
                 <v-chip
@@ -49,12 +49,12 @@
               </h2>
               <h2 class="text-center">
                 <v-icon>schedule</v-icon>
-                <b> Lest Login</b>
+                <b> Last Login</b>
                 {{playerLastLogin}} | {{fromNow(player.lastLogin)}}
               </h2>
               <v-divider style="margin-top:10px;margin-bottom:10px"
-               v-if="player.infractions.bans.length!=0"></v-divider>
-              <h2 class="text-center" v-if="player.infractions.bans.length!=0">
+               v-if="!noInfractions()"></v-divider>
+              <h2 class="text-center" v-if="!noInfractions()">
                 <v-icon>account_balance</v-icon>
                 <b> Bans</b>
               </h2>
@@ -78,7 +78,6 @@ import gql from 'graphql-tag';
 import countdown from 'countdown';
 import BanListItem from './BanListItem.vue';
 
-// TODO: allow providing either name or uuid as prop
 export default {
   name: 'PlayerProfile',
   components: { BanListItem },
@@ -107,9 +106,11 @@ export default {
       return this.formatDate(this.player.lastLogin * 1);
     },
     playerRanks() {
+      if (this.player.groups === undefined) return null;
       return this.player.groups.map((group) => group.id.toUpperCase());
     },
     playerBans() {
+      if (this.player.infractions === undefined) return false;
       return this.player.infractions.bans.map((ban) => ({
         active: ban.isActive,
         server: (ban.server == null) ? 'Tallcraft Network' : ban.server.name,
@@ -124,6 +125,12 @@ export default {
     $route: 'executeQuery',
   },
   methods: {
+    noGroups() {
+      return this.player.groups?.length === 0;
+    },
+    noInfractions() {
+      return this.player.infractions?.bans?.length === 0;
+    },
     fromNow(date) {
       return `${countdown(new Date(), date, countdown.ALL, 1)} ago`;
     },
@@ -135,6 +142,9 @@ export default {
       return d.toLocaleString();
     },
     async executeQuery() {
+      if (this.name.length <= 16) {
+        this.$router.push(`/search/${this.name}/page/1`);
+      }
       const player = await this.$apollo.query({
         query: gql`
         query {
