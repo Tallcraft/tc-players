@@ -57,19 +57,19 @@
               <h2 class="text-center" v-if="player.infractions.bans.length!=0">
                 <v-icon>account_balance</v-icon>
                 <b> Bans</b>
-                <v-expansion-panels multiple>
-                  <BanListItem
-                    v-for="(ban, i) in playerBans"
-                    :key="i"
-                    :banStaff="ban.staff"
-                    :banReason="ban.reason"
-                    :isBanActive="ban.active"
-                    :banServer="ban.server"
-                    :banStart="ban.start"
-                    :banEnd="ban.end">
-                  </BanListItem>
-                </v-expansion-panels>
               </h2>
+              <v-expansion-panels multiple>
+                <BanListItem
+                  v-for="(ban, i) in playerBans"
+                  :key="i"
+                  :banStaff="ban.staff"
+                  :banReason="ban.reason"
+                  :isBanActive="ban.active"
+                  :banServer="ban.server"
+                  :banStart="ban.start"
+                  :banEnd="ban.end">
+                </BanListItem>
+              </v-expansion-panels>
         </v-flex>
 </template>
 
