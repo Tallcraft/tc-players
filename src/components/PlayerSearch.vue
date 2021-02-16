@@ -126,6 +126,7 @@ export default {
     async executeQuery() {
       this.preTests();
       this.players = null;
+      if (this.page <= 0) this.page = 1;
       const players = await this.$apollo.query({
         query: (!this.serverQuery) ? gql`
         query {
