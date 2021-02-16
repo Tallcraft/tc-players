@@ -73,7 +73,7 @@ export default {
       type: String,
     },
     page: {
-      default: 0,
+      default: 1,
     },
   },
   data() {
@@ -126,11 +126,11 @@ export default {
     async executeQuery() {
       this.preTests();
       this.players = null;
-      if (this.page <= 0) this.page = 1;
+      const page = (this.page <= 0) ? 1 : this.page;
       const players = await this.$apollo.query({
         query: (!this.serverQuery) ? gql`
         query {
-          players(searchPlayerName:"%${this.name.replace('_', '\\\\_')}%", limit:20, offset:${(this.page - 1) * 20}){
+          players(searchPlayerName:"%${this.name.replace('_', '\\\\_')}%", limit:20, offset:${(page - 1) * 20}){
             totalCount
             result{
               lastSeenName
