@@ -94,7 +94,7 @@ export default {
   },
   computed: {
     playerAvatarUrl() {
-      if (this.player == null) {
+      if (this.player?.uuid === undefined) {
         return '';
       }
       return `https://crafatar.com/avatars/${this.player.uuid}?size=300&overlay`;
