@@ -1,88 +1,86 @@
 <template>
-    <v-layout row>
-        <v-flex xs12 sm6 offset-sm3>
-            <v-progress-linear indeterminate
-              v-show="player.firstLogin == undefined || playerNotFound"></v-progress-linear>
-            <v-card v-if="name == null || name === ''">
-                <h3 class="justify-center"
-               style="text-align:center;">Please provide a UUID.</h3>
-            </v-card>
-            <v-card v-else-if="playerNotFound">
+        <v-flex>
+           <v-progress-linear indeterminate v-if="player == null"></v-progress-linear>
+            <v-card v-if="name == ''">
               <h3 class="justify-center"
-               style="text-align:center;">Could not find a player with the uuid <br>'{{name}}'</h3>
+              style="text-align:center;">Please provide a UUID.</h3>
             </v-card>
-            <v-card inline v-else-if="player != null">
+            <v-card v-else-if="player == null">
+              <h3 class="justify-center"
+              style="text-align:center;">Player not found.</h3>
+            </v-card>
               <v-img
                 :src="playerAvatarUrl"
-                class="justify-center"
-                style="width:50%;
-                left:25%"
+                style="width:20%;
+                left:40%"
                 loading="Loading Avatar..."
               >
               </v-img>
-              <h3 class="justify-center"
-                style="
-                text-align:center;
-                margin-top:10px"
-                v-if="player.connectedTo!=null"
-                >
-                This User Is Online On {{player.connectedTo.name}}.
-                </h3>
-                <v-divider block style="margin-top:2%;margin-bottom:2%"
-                 v-if="player.connectedTo!=null"></v-divider>
-              <div primary-title class="headline">{{player.name}}</div>
-              <!-- <v-icon color="accent">perm_identity</v-icon> -->
-              <h3 class="justify-center"
-                  style="text-align:center;">
-                Name: {{player.lastSeenName}}
-                <br>UUID: {{player.uuid}}</h3>
-              <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
-              <h3 class="justify-center"
-                style="text-align:center;">Rank(s): {{playerRanks}}</h3>
-              <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
-              <h3 class="justify-center"
-                style="text-align:center;">Last Login: {{playerLastLogin}}
-                |  {{fromNow(player.lastLogin)}}
-              <br>First Login: {{playerFirstLogin}}
-                |  {{fromNow(player.firstLogin)}}</h3>
-              <v-divider block style="margin-top:2%;margin-bottom:2%"></v-divider>
-              <h3 class="justify-center"
-                style="
-                text-align:center;
-                margin-top:10px"
-                v-if="playerHistoryData"
-                >
-                Ban Information
-                </h3>
-                <h3 class="justify-center"
-                style="
-                text-align:center;
-                margin-top:10px;
-                margin-bottom:10px;"
-                v-if="!playerHistoryData"
-                >
-                This User Has No Bans On Record.
-                </h3>
-              <v-data-table
-                :headers="playerHistoryHeader"
-                :items="playerHistoryData"
-                v-if="playerHistoryData"
-                hide-default-footer
-                class="elevation-1"
-              >
-              </v-data-table>
-            </v-card>
+              <h1 class="text-center">
+                <v-icon :color="`${(player.connectedTo!=null)?'green':'red'}`">
+                  fiber_manual_record
+                </v-icon>
+                {{player.lastSeenName}}
+              </h1>
+              <h2 class="text-center">
+                <v-icon>perm_identity</v-icon>
+                {{player.uuid}}
+              </h2>
+              <v-divider style="margin-top:10px;margin-bottom:10px"></v-divider>
+              <h2 class="text-center"  v-if="!noGroups()">
+                <v-icon>star_border</v-icon>
+                <b style="margin-right:20px"> Ranks</b>
+                <v-chip
+                  v-for="(rank) in playerRanks"
+                  :key="rank"
+                  class="mr-4">
+                    {{rank}}
+                  </v-chip>
+              </h2>
+              <h2 v-else class="text-center">
+                <v-icon>star_border</v-icon>
+                <b style="margin-right:20px"> User Has No Ranks</b>
+              </h2>
+              <v-divider style="margin-top:10px;margin-bottom:10px"></v-divider>
+              <h2 class="text-center">
+                <v-icon>schedule</v-icon>
+                <b> First Login</b>
+                {{playerFirstLogin}} | {{fromNow(player.firstLogin)}}
+              </h2>
+              <h2 class="text-center">
+                <v-icon>schedule</v-icon>
+                <b> Last Login</b>
+                {{playerLastLogin}} | {{fromNow(player.lastLogin)}}
+              </h2>
+              <v-divider style="margin-top:10px;margin-bottom:10px"
+               v-if="!noInfractions()"></v-divider>
+              <h2 class="text-center" v-if="!noInfractions()">
+                <v-icon>account_balance</v-icon>
+                <b> Bans</b>
+              </h2>
+              <v-expansion-panels multiple>
+                <BanListItem
+                  v-for="(ban, i) in playerBans"
+                  :key="i"
+                  :banStaff="ban.staff"
+                  :banReason="ban.reason"
+                  :isBanActive="ban.active"
+                  :banServer="ban.server"
+                  :banStart="ban.start"
+                  :banEnd="ban.end">
+                </BanListItem>
+              </v-expansion-panels>
         </v-flex>
-    </v-layout>
 </template>
 
 <script>
 import gql from 'graphql-tag';
 import countdown from 'countdown';
+import BanListItem from './BanListItem.vue';
 
-// TODO: allow providing either name or uuid as prop
 export default {
   name: 'PlayerProfile',
+  components: { BanListItem },
   props: {
     name: {
       default: '',
@@ -92,49 +90,11 @@ export default {
   data() {
     return {
       player: this.executeQuery(),
-      playerHistoryHeader: [
-        {
-          text: 'Active',
-          sortable: false,
-          value: 'active',
-        },
-        {
-          text: 'Server',
-          sortable: false,
-          value: 'server',
-        },
-        {
-          text: 'Reason',
-          sortable: false,
-          value: 'reason',
-        },
-        {
-          text: 'Staff',
-          sortable: false,
-          value: 'staff',
-        },
-        {
-          text: 'Begin',
-          sortable: false,
-          value: 'start',
-        },
-        {
-          text: 'End',
-          sortable: false,
-          value: 'end',
-        },
-      ],
     };
   },
   computed: {
-    playerNotFound() {
-      if (this.player === undefined) {
-        return false;
-      }
-      return this.player == null;
-    },
     playerAvatarUrl() {
-      if (this.player == null) {
+      if (this.player?.uuid === undefined) {
         return '';
       }
       return `https://crafatar.com/avatars/${this.player.uuid}?size=300&overlay`;
@@ -146,17 +106,11 @@ export default {
       return this.formatDate(this.player.lastLogin * 1);
     },
     playerRanks() {
-      if (!this.player?.groups?.length) return 'None';
-      return `[${this.player.groups.map((group) => group.id)
-        .join()
-        .split(',')
-        .join('] [')
-        .toUpperCase()}]`;
+      if (this.player.groups === undefined) return null;
+      return this.player.groups.map((group) => group.id.toUpperCase());
     },
-    playerHistoryData() {
-      if (this.player === null || this.player === undefined) return null;
-      if (this.player.infractions === undefined) return null;
-      if (this.player.infractions.bans.length === 0) return null;
+    playerBans() {
+      if (this.player.infractions === undefined) return false;
       return this.player.infractions.bans.map((ban) => ({
         active: ban.isActive,
         server: (ban.server == null) ? 'Tallcraft Network' : ban.server.name,
@@ -171,6 +125,12 @@ export default {
     $route: 'executeQuery',
   },
   methods: {
+    noGroups() {
+      return this.player.groups?.length === 0;
+    },
+    noInfractions() {
+      return this.player.infractions?.bans?.length === 0;
+    },
     fromNow(date) {
       return `${countdown(new Date(), date, countdown.ALL, 1)} ago`;
     },
@@ -182,6 +142,9 @@ export default {
       return d.toLocaleString();
     },
     async executeQuery() {
+      if (this.name.length <= 16) {
+        this.$router.push(`/search/${this.name}/page/1`);
+      }
       const player = await this.$apollo.query({
         query: gql`
         query {

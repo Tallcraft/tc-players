@@ -63,7 +63,9 @@ export default {
   },
   methods: {
     playerLookup() {
-      this.$router.push(`/search/${this.playerInput}`);
+      if (!this.$router.history.current.path.endsWith(`/search/${this.playerInput}`)) {
+        this.$router.push(`/search/${this.playerInput}`);
+      }
     },
     getThemeState() {
       if (!localStorage) {

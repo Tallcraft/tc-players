@@ -1,13 +1,15 @@
 <template>
-  <div>
+  <div v-if="players!=null">
     <v-progress-linear
       indeterminate
       v-show="!Array.isArray(players.result)">
     </v-progress-linear>
-    <div v-if="players.result.length == 0">
+    <div
+     v-if="players.result == undefined || players.result.length==0"
+     v-show="Array.isArray(players.result)">
       <h3 style="text-align:center">There were no results for the query : {{name}}</h3>
     </div>
-    <div v-if="players.result.length > 0">
+    <div v-else>
       <h1 v-show="Array.isArray(players.result)">
         Search results for '{{name}}' (Page {{page}}/{{Math.ceil(players.totalCount/20)}}) :
       </h1>
@@ -42,6 +44,7 @@
           height:20;"
           class="btn-text"
           @click.native="$router.push(`/player/${player.uuid}`)">
+          <v-icon>perm_identity</v-icon>
           <p block style="margin:auto">{{getRanks(player.uuid)}} {{player.lastSeenName}}</p>
         </v-btn>
       </div>
@@ -70,7 +73,7 @@ export default {
       type: String,
     },
     page: {
-      default: 0,
+      default: 1,
     },
   },
   data() {
@@ -111,46 +114,52 @@ export default {
     },
     getRanks(uuid) {
       const result = this.players.result.filter((player) => player.uuid === uuid)[0];
-      if (result == null || result.groups.length === 0) {
+      if (result == null || result.groups?.length === 0) {
         return null;
       }
-      return `[${result.groups.map((group) => group.id).join().split(',').join('] [')}]`;
+      return `[${result.groups.map((group) => group.id)
+        .join()
+        .split(',')
+        .join('] [')
+        .toUpperCase()}]`;
     },
     async executeQuery() {
       this.preTests();
       this.players = null;
+      const page = (this.page <= 0) ? 1 : this.page;
       const players = await this.$apollo.query({
         query: (!this.serverQuery) ? gql`
         query {
-          players(searchPlayerName:"%${this.name.replace('_', '\\\\_')}%", limit:20, offset:${(this.page - 1) * 20}){
-    totalCount
-    result{
-            lastSeenName
-            firstLogin
-            lastLogin
-            uuid
-            groups{
-              id
+          players(searchPlayerName:"%${this.name.replace('_', '\\\\_')}%", limit:20, offset:${(page - 1) * 20}){
+            totalCount
+            result{
+              lastSeenName
+              firstLogin
+              lastLogin
+              uuid
+              groups{
+                id
+              }
             }
           }
-  }
-}
+        }
         ` : gql`
         query{
-        mcServer(serverId:"${this.serverName}"){
-          name
-  status{
-    onlinePlayers{
-                  lastSeenName
-            firstLogin
-            lastLogin
-            uuid
-            groups{
-              id
+          mcServer(serverId:"${this.serverName}"){
+            name
+            status{
+              onlinePlayers{
+                lastSeenName
+                firstLogin
+                lastLogin
+                uuid
+                groups{
+                  id
+                }
+              }
             }
-    }
-  }
-}}`,
+          }
+        }`,
       });
       if (this.serverQuery) {
         this.players = {};
@@ -171,7 +180,6 @@ export default {
     preTests() {
       if ((this.page * 1) < 1) {
         this.$router.replace(`/search/${this.name}/page/1`);
-        this.page = 1;
       }
       this.serverQuery = false;
       this.serverName = '';
@@ -179,9 +187,8 @@ export default {
         const nme = this.name.split(':');
         if (!Number.isNaN((nme[1] * 1))) {
           [this.name, this.page] = nme;
-          this.page = (this.page > Math.ceil(this.players.totalCount / 20))
-            ? Math.ceil(this.players.totalCount / 20) : this.page;
-          this.$router.replace(`/search/${this.name}/page/${this.page}`);
+          this.$router.replace(`/search/${this.name}/page/${(this.page > Math.ceil(this.players.totalCount / 20))
+            ? Math.ceil(this.players.totalCount / 20) : this.page}`);
         }
         if (nme[0] === ('on')) {
           this.serverQuery = true;
