@@ -183,6 +183,9 @@ export default {
       }
       this.serverQuery = false;
       this.serverName = '';
+      if (this.name.length === 36 && this.name.split('-').length === 5) {
+        this.$router.replace(`/player/${this.name}`);
+      }
       if (this.name.includes(':')) {
         const nme = this.name.split(':');
         if (!Number.isNaN((nme[1] * 1))) {
