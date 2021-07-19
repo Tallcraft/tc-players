@@ -1,12 +1,13 @@
 <template>
-  <div>
-    <img alt="Tallcraft Players Logo" :src="logoSrc" style="display:block;
+<div>
+    <img alt="Tallcraft Logo" :src="logoSrc" style="display:block;
               margin-left:auto;
               margin-right:auto;
               margin-top:3%;
-              margin-bottom:5%;
-              width:30%">
-    <v-text-field
+              margin-bottom:3%;
+              width:15%">
+        <h1>Players</h1>
+        <v-text-field
             flat
             solo-inverted
             hide-details
@@ -22,12 +23,18 @@
   a {
     text-decoration: none;
   }
+  h1{
+      text-align:center;
+      font-size: 4vw;
+      margin-bottom: .5em;
+      margin-top: -1em;
+    }
 </style>
 
 <script>
 
 import gql from 'graphql-tag';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo.svg';
 
 export default {
   name: 'MainView',
