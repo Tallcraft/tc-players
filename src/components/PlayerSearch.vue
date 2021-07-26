@@ -10,26 +10,24 @@
       <h3 style="text-align:center">There were no results for the query : {{name}}</h3>
     </div>
     <div v-else>
-    <v-container>
-      <v-row v-for="i in Math.floor(players.result.length/10)" :key="i">
-        <v-col
-          v-for="(player, index) in getArray(i)"
-          :key="index"
-          class="pa-2"
-          tile
-        >
+    <v-container
+      class="d-flex flex-row m-6 justify-center flex-wrap"
+      outlined
+      tile>
+      <div v-for="(player, index) in players.result" :key="index" class="mr-6">
           <PlayerTag :UUID="player.uuid"
           :title="`${getRanks(player.uuid)}\n${player.lastSeenName}`"
           class="playerTag"
           @click.native="goTo(`/player/${player.uuid}`)">
           </PlayerTag>
-        </v-col>
-      </v-row>
+      </div>
     </v-container>
     <v-footer class="footer" v-show="Array.isArray(players.result)">
       <v-btn @click="changePage(-1)" :disabled="page<=1">Back</v-btn>
       <v-divider/>
-      <h3>Search results for '{{name}}' (Page {{page}}/{{Math.ceil(players.totalCount/50)}})</h3>
+      <h3 style="font-size: max(1.4vw,9pt);">
+        Search results for '{{name}}' (Page {{page}}/{{Math.ceil(players.totalCount/50)}})
+      </h3>
       <v-divider/>
       <v-btn @click="changePage(1)" :disabled="page>=Math.ceil(players.totalCount/50)">Next</v-btn>
     </v-footer>
@@ -49,7 +47,7 @@
     bottom:0;
     width:100%;
     left:0;
-}
+  }
 </style>
 
 <script>
