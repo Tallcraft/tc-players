@@ -10,16 +10,22 @@
       <h3 style="text-align:center">There were no results for the query : {{name}}</h3>
     </div>
     <div v-else>
-      <div  class="holder">
-      <div v-for="(player, index) in players.result" :key="index">
-        <PlayerTag :UUID="player.uuid"
-         :title="`${getRanks(player.uuid)}\n${player.lastSeenName}`"
-         class="playerTag"
-         height="15%"
-         @click.native="goTo(`/player/${player.uuid}`)">
-        </PlayerTag>
-      </div>
-    </div>
+    <v-container>
+      <v-row v-for="i in Math.floor(players.result.length/10)" :key="i">
+        <v-col
+          v-for="(player, index) in getArray(i)"
+          :key="index"
+          class="pa-2"
+          tile
+        >
+          <PlayerTag :UUID="player.uuid"
+          :title="`${getRanks(player.uuid)}\n${player.lastSeenName}`"
+          class="playerTag"
+          @click.native="goTo(`/player/${player.uuid}`)">
+          </PlayerTag>
+        </v-col>
+      </v-row>
+    </v-container>
     <v-footer class="footer" v-show="Array.isArray(players.result)">
       <v-btn @click="changePage(-1)" :disabled="page<=1">Back</v-btn>
       <v-divider/>
@@ -35,21 +41,8 @@
   a {
     text-decoration: none;
   }
-  .btn-text {
-    float: left;
-  }
   .playerTag:hover{
     cursor: pointer;
-  }
-  .holder{
-    margin-top:1%;
-    width:100%;
-    grid-template-columns: repeat(10, 1fr);
-    gap: max(1%,5px);
-    grid-auto-rows: max(13.5vw,75px);
-    display:grid;
-    justify-content:center;
-    margin-bottom:5%;
   }
   .footer{
     position:fixed;
@@ -101,6 +94,10 @@ export default {
     },
   },
   methods: {
+    getArray(num) {
+      return this.players.result.slice((num - 1) * 10,
+        Math.min((num - 1) * 10 + 10, this.players.result.length));
+    },
     goTo(uri) {
       this.$router.push(uri);
     },

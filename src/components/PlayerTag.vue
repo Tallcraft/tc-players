@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-card height="max(13.5vw,75px)">
+    <v-card min-width="40px" max-width="7vw">
       <img :src="`https://crafatar.com/avatars/${UUID}?size=300&overlay`"
       style="width:75%;
       margin-left:12.5%;
       padding-top:12.5%;">
         <p
         style="
-        font-size: max(1vw,5pt);
+        font-size: max(0.8vw,7pt);
         text-align:center;">
           {{title}}
         </p>
