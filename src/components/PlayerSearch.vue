@@ -127,10 +127,11 @@ export default {
       this.preTests();
       this.players = null;
       const page = (this.page <= 0) ? 1 : this.page;
+      const searchName = this.name.replace(/\s*$/, '').replace(/(.)\s(.)/g, '$1_$2').replace('_', '\\\\_'); // Trim off trailing whitespace, replace inner whitespace with underscore, and replace underscore with escape version.
       const players = await this.$apollo.query({
         query: (!this.serverQuery) ? gql`
         query {
-          players(searchPlayerName:"%${this.name.replace('_', '\\\\_')}%", limit:20, offset:${(page - 1) * 20}){
+          players(searchPlayerName:"%${searchName}%", limit:20, offset:${(page - 1) * 20}){
             totalCount
             result{
               lastSeenName
@@ -178,29 +179,35 @@ export default {
       return this.players;
     },
     preTests() {
+      // Name is fixed beforehand so it's more clear to the user what the page is actually querying.
+      let fixedName = this.name.replace(/(?!^)\s*$/gm, '').replace(/(.)\s(.)/g, '$1_$2'); // Trim off trailing whitespace, and replace inner whitespace with underscore
       if ((this.page * 1) < 1) {
-        this.$router.replace(`/search/${this.name}/page/1`);
+        this.$router.replace(`/search/${fixedName}/page/1`);
       }
       this.serverQuery = false;
       this.serverName = '';
       if (this.name.length === 36 && this.name.split('-').length === 5) {
         this.$router.replace(`/player/${this.name}`);
+        return;
       }
       if (this.name.includes(':')) {
         const nme = this.name.split(':');
         if (!Number.isNaN((nme[1] * 1))) {
           [this.name, this.page] = nme;
-          this.$router.replace(`/search/${this.name}/page/${(this.page > Math.ceil(this.players.totalCount / 20))
+          this.$router.replace(`/search/${fixedName}/page/${(this.page > Math.ceil(this.players.totalCount / 20))
             ? Math.ceil(this.players.totalCount / 20) : this.page}`);
         }
         if (nme[0] === ('on')) {
           this.serverQuery = true;
-          [this.name, this.serverName] = nme;
+          [fixedName, this.serverName] = nme;
           this.name = nme.join(':');
         }
       }
       if (this.name === '') {
         this.$router.replace('/main');
+      }
+      if (fixedName !== this.name) {
+        this.$router.replace(`/search/${fixedName}/page/1`);
       }
     },
     changePage(amount) {
@@ -211,7 +218,7 @@ export default {
       this.$router.push(`/search/${this.name}/page/${(this.page * 1) + amount}`);
     },
     checkOneResult() {
-      if (this.players.result.length === 1 && this.page === '1' && !this.serverQuery) {
+      if (this.players.result.length === 1 && this.page === 1 && !this.serverQuery) {
         this.$router.replace(`/player/${this.players.result[0].uuid}`);
         return true;
       }
