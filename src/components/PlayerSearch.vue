@@ -1,64 +1,70 @@
 <template>
-  <div v-if="players!=null">
+  <div v-if="players!=null" :key="name">
     <v-progress-linear
       indeterminate
-      v-show="!Array.isArray(players.result)">
+      v-show="!Array.isArray(players.result) || wait">
     </v-progress-linear>
     <div
-     v-if="players.result == undefined || players.result.length==0"
-     v-show="Array.isArray(players.result)">
+      v-if="players.result === undefined || players.result.length === 0"
+      v-show="Array.isArray(players.result)">
       <h3 style="text-align:center">There were no results for the query : {{name}}</h3>
     </div>
     <div v-else>
       <h1 v-show="Array.isArray(players.result)">
-        Search results for '{{name}}' (Page {{page}}/{{Math.ceil(players.totalCount/20)}}) :
+        Search results for '{{name}}' (Page {{pageNum}}/{{Math.ceil(players.totalCount/20)}}) :
       </h1>
-      <div style="display:inline-block;margin-bottom:50px">
-        <v-btn
-          style="display:inline-block;
-          width:40%;
-          position:absolute;
-          left:0"
-          class="btn-text"
-          @click.native="changePage(-1)"
-          :disabled="page<=1 || wait">
-          <p block style="margin:auto">Previous</p>
-        </v-btn>
-        <v-btn inline-block
-          style="display:inline-block;
-          width:40%;
-          right:0;
-          height:20;
-          position:absolute;"
-          class="btn-text"
-          @click.native="changePage(1)"
-          :disabled="nextDisabled">
-          <p block style="margin:auto">Next</p>
-        </v-btn>
-      </div>
-      <div block v-for="(player, index) in players.result" :key="index" class="row">
-        <v-btn block
-          left
-          style="display:inline;
-          width:100%;
-          height:20;"
-          class="btn-text"
-          @click.native="$router.push(`/player/${player.uuid}`)">
-          <v-icon>perm_identity</v-icon>
-          <p block style="margin:auto">{{getRanks(player.uuid)}} {{player.lastSeenName}}</p>
-        </v-btn>
-      </div>
     </div>
+  </div>
+  <v-container class="playerContainer pa-0" fluid v-if="players != null">
+    <div class="d-inline-flex" v-for="(player, index) in players.result" :key="index">
+      <v-card
+        class="ma-7"
+        @click.native="$router.push(`/player/${player.uuid}`)">
+        <v-img
+          :src="playerAvatarUrl(player.uuid)"
+          style="width:min(6rem, 20vw); height:min(6rem, 20vw);"
+          class="ma-5"
+        >
+          <template v-slot:placeholder>
+            <div class="d-flex align-center justify-center fill-height">
+              <v-progress-circular
+                color="grey-lighten-4"
+                indeterminate
+              ></v-progress-circular>
+            </div>
+          </template>
+        </v-img>
+        <h4 class="text-center mb-5">{{player.lastSeenName}}</h4>
+      </v-card>
+    </div>
+  </v-container>
+  <div class="d-inline-flex mt-5 w-100" v-if="players != null">
+    <v-btn class="btn-text mr-auto w-25"
+           @click.native="changePage(-1)"
+           :disabled="pageNum<=1 || wait">
+      <p class="block" style="margin:auto">Previous</p>
+    </v-btn>
+    <v-btn class="btn-text ml-auto w-25"
+           @click.native="changePage(1)"
+           :disabled="nextDisabled">
+      <p class="block" style="margin:auto">Next</p>
+    </v-btn>
   </div>
 </template>
 
 <style scoped>
-  a {
-    text-decoration: none;
-  }
-  .btn-text {
-    float: left;
-  }
+a {
+  text-decoration: none;
+}
+.btn-text {
+  float: left;
+}
+
+.playerContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, calc(min(6rem, 20vw) + 6rem));
+  justify-content: center;
+}
 </style>
 
 <script>
@@ -74,28 +80,30 @@ export default {
     },
     page: {
       default: 1,
+      type: String,
     },
   },
   data() {
     return {
-      players: this.executeQuery(),
+      players: undefined,
       wait: false,
+      pageNum: 0,
+      searchString: "",
     };
   },
-  watch: {
-    $route: 'executeQuery',
+  mounted() {
+    this.pageNum = this.page*1;
+    this.wait = true;
+    this.executeQuery().then(result => {
+       this.players = result;
+       this.wait = false;
+       this.checkOneResult();
+    });
   },
   computed: {
     nextDisabled() {
       if (this.players.result == null) return null;
       return this.players.result.length < 20 || this.wait;
-    },
-    height() {
-      const { body } = document;
-      const html = document.documentElement;
-      const height = Math.max(body.scrollHeight, body.offsetHeight,
-        html.clientHeight, html.scrollHeight, html.offsetHeight);
-      return height;
     },
     length() {
       if (this.players == null) {
@@ -105,35 +113,22 @@ export default {
     },
   },
   methods: {
+    playerAvatarUrl(uuid) {
+      if (uuid === undefined) {
+        return '';
+      }
+      return `https://crafatar.com/avatars/${uuid}?size=300&overlay`;
+    },
     cleanUpSearchString(string) {
       let outputString = string.replace(/\s*$/, ''); // Trim whitespaces off the end
       outputString = outputString.replace('_', '\\\\_'); // Escape underscores so the query is not misinterpreted
       return outputString;
     },
-    formatDate(date) {
-      if (date == null) {
-        return '-';
-      }
-      const d = new Date(date);
-      return d.toLocaleString();
-    },
-    getRanks(uuid) {
-      const result = this.players.result.filter((player) => player.uuid === uuid)[0];
-      if (result == null || result.groups?.length === 0) {
-        return null;
-      }
-      return `[${result.groups.map((group) => group.id)
-        .join()
-        .split(',')
-        .join('] [')
-        .toUpperCase()}]`;
-    },
     async executeQuery() {
       this.preTests();
-      this.players = null;
-      const page = (this.page <= 0) ? 1 : this.page;
-      const searchName = this.cleanUpSearchString(this.name);
-      const players = await this.$apollo.query({
+      const page = (this.pageNum <= 0) ? 1 : this.pageNum;
+      const searchName = this.cleanUpSearchString(this.searchString);
+      const newPlayers = await this.$apollo.query({
         query: (!this.serverQuery) ? gql`
         query {
           players(searchPlayerName:"%${searchName}%", limit:20, offset:${(page - 1) * 20}){
@@ -167,61 +162,67 @@ export default {
           }
         }`,
       });
+      let ret = {};
       if (this.serverQuery) {
-        this.players = {};
-        if (players.data.mcServer.status.onlinePlayers === null) {
-          this.players.result = [];
+        if (newPlayers.data.mcServer.status.onlinePlayers === null) {
+          ret.result = [];
         } else {
-          this.players.result = players.data.mcServer.status.onlinePlayers;
-          this.players.totalCount = players.data.mcServer.status.onlinePlayers.length;
+          ret.result = newPlayers.data.mcServer.status.onlinePlayers;
+          ret.totalCount = newPlayers.data.mcServer.status.onlinePlayers.length;
         }
       } else {
-        this.players = players.data.players;
+        ret = newPlayers.data.players;
       }
-      this.players = (this.players === null) ? [] : this.players;
-      this.checkOneResult();
-      this.wait = false;
-      return this.players;
+      ret = (ret === null) ? [] : ret;
+      return ret;
     },
     preTests() {
+      this.searchString = this.name;
       // Name is fixed beforehand so it's more clear to the user what the page is actually querying.
-      let nameWithoutWhitespace = this.cleanUpSearchString(this.name);
-      if ((this.page * 1) < 1) {
+      let nameWithoutWhitespace = this.cleanUpSearchString(this.searchString);
+      if (this.pageNum < 1) {
         this.$router.replace(`/search/${nameWithoutWhitespace}/page/1`);
       }
       this.serverQuery = false;
       this.serverName = '';
-      if (this.name.length === 36 && this.name.split('-').length === 5) {
-        this.$router.replace(`/player/${this.name}`);
+      if (this.searchString.length === 36 && this.searchString.split('-').length === 5) {
+        this.$router.replace(`/player/${this.searchString}`);
         return;
       }
-      if (this.name.includes(':')) {
-        const nme = this.name.split(':');
+      if (this.searchString.includes(':')) {
+        const nme = this.searchString.split(':');
         if (!Number.isNaN((nme[1] * 1))) {
-          [this.name, this.page] = nme;
-          this.$router.replace(`/search/${nameWithoutWhitespace}/page/${(this.page > Math.ceil(this.players.totalCount / 20))
-            ? Math.ceil(this.players.totalCount / 20) : this.page}`);
+          [this.searchString, this.pageNum] = nme;
+          this.$router.replace(`/search/${nameWithoutWhitespace}/page/${(this.pageNum > Math.ceil(this.players.totalCount / 20))
+            ? Math.ceil(this.players.totalCount / 20) : this.pageNum}`);
           return;
         }
         if (nme[0] === ('on')) {
           this.serverQuery = true;
           [nameWithoutWhitespace, this.serverName] = nme;
-          this.name = nme.join(':');
+          this.searchString = nme.join(':');
         }
       }
-      if (this.name === '') {
+      if (this.searchString === '') {
         this.$router.replace('/main');
       }
     },
     changePage(amount) {
       this.wait = true;
-      if ((this.page * 1) + amount < 1) {
-        this.$router.push(`/search/${this.name}/page/1`);
+      if (this.pageNum + amount < 1) {
+        this.pageNum = 1;
+      } else {
+        this.pageNum += amount;
       }
-      this.$router.push(`/search/${this.name}/page/${(this.page * 1) + amount}`);
+      window.history.replaceState({}, "", `/search/${this.name}/${this.pageNum}`);
+      this.executeQuery().then(result => {
+        this.players = result;
+        this.wait = false;
+        this.checkOneResult();
+      });
     },
     checkOneResult() {
-      if (this.players.result.length === 1 && this.page === 1 && !this.serverQuery) {
+      if (this.players.result.length === 1 && this.pageNum === 1 && !this.serverQuery) {
         this.$router.replace(`/player/${this.players.result[0].uuid}`);
         return true;
       }

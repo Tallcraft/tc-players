@@ -1,22 +1,26 @@
 <template>
-  <v-expansion-panel>
-    <v-expansion-panel-header class="justify-space-between flex-wrap" expand-icon="expand_more">
-      <v-icon class="flex-grow-0 pr-4">report</v-icon>
-      <b>{{banReason}}</b>
-       <v-chip class="flex-grow-0 playerCounter mr-4">
+  <v-expansion-panel variant="accordion">
+    <v-expansion-panel-title>
+      <v-icon class="flex-grow-0 pr-4">mdi-alert-octagon</v-icon>
+      <v-chip :color="isBanActive ? 'red' : 'gray'">
+        <p v-if="isBanActive">Active</p>
+        <p v-else>Inactive</p>
+      </v-chip>
+      <v-chip class="mr-2 ml-2">
         {{banStaff}}
       </v-chip>
-    </v-expansion-panel-header>
-    <v-expansion-panel-content>
+      <b>{{banReason}}</b>
+    </v-expansion-panel-title>
+    <v-expansion-panel-text>
       <v-lazy>
         <BanDetail
-          :isBanActive="isBanActive"
           :banServer="banServer"
           :banStart="banStart"
-          :banEnd="banEnd">
+          :banEnd="banEnd"
+        :pardoned="pardoned">
         </BanDetail>
       </v-lazy>
-    </v-expansion-panel-content>
+    </v-expansion-panel-text>
   </v-expansion-panel>
 </template>
 
@@ -51,6 +55,10 @@ export default {
       type: String,
       required: true,
     },
-  },
+    pardoned: {
+      type:Boolean,
+      required: true,
+    }
+  }
 };
 </script>
