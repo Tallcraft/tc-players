@@ -1,54 +1,37 @@
 <template>
   <div>
-    <v-list>
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon>help</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <b>Active</b>
-            {{isBanActive}}
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon>dns</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <b>Server</b>
-            {{banServer}}
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon>schedule</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <b>Created</b>
-            {{banStart}}
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-icon>
-            <v-icon>schedule</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <b>Expires</b>
-            {{banEnd}}
-          </v-list-item-content>
-        </v-list-item>
-    </v-list>
+    <v-card class="mt-2 pt-2 pb-2">
+      <p class="text-grey-lighten-1 text-lg-h6 text-center">Server</p>
+      <h2 class="text-center">
+        {{banServer}}
+      </h2>
+    </v-card>
+    <v-card class="mt-2 pt-2 pb-2">
+      <p class="text-grey-lighten-1 text-lg-h6 text-center">Created</p>
+      <h2 class="text-center">
+        {{banStart}}
+      </h2>
+    </v-card>
+    <v-card class="mt-2 pt-2 pb-2">
+      <p class="text-grey-lighten-1 text-lg-h6 text-center">Expires</p>
+      <h2 class="text-center" v-if="banEnd !== 'Null'">
+        {{banEnd}}
+      </h2>
+      <h2 class="text-center text-amber-accent-4" v-if="banEnd === 'Null' && !pardoned">
+        Permanent
+      </h2>
+      <h2 class="text-center text-amber-accent-1" v-if="banEnd === 'Null' && pardoned">
+        Permanent, but pardoned
+      </h2>
+    </v-card>
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'BanDetail',
   props: {
-    isBanActive: {
-      type: Boolean,
-      required: true,
-    },
     banServer: {
       type: String,
       required: true,
@@ -61,6 +44,10 @@ export default {
       type: String,
       required: true,
     },
+    pardoned: {
+      type:Boolean,
+      required: true,
+    }
   },
 };
 </script>

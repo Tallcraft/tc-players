@@ -1,16 +1,18 @@
 import Vue from 'vue';
-import Router from 'vue-router';
+import {createRouter, createWebHistory} from 'vue-router';
 
 import NotFound from '@/views/NotFound.vue';
-
 import MainView from '@/components/MainView.vue';
-import PlayerProfile from '@/components/PlayerProfile.vue';
 import PlayerSearch from '@/components/PlayerSearch.vue';
+import PlayerProfile from '@/components/PlayerProfile.vue';
 
-Vue.use(Router);
+//
+// import MainView from '@/components/MainView.vue';
+// import PlayerProfile from '@/components/PlayerProfile.vue';
+// import PlayerSearch from '@/components/PlayerSearch.vue';
 
-export default new Router({
-  mode: 'history',
+export default createRouter({
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
@@ -41,13 +43,13 @@ export default new Router({
       props: true,
     },
     {
-      path: '/search/:name/page/:page',
+      path: '/search/:name/:page',
       name: 'search',
       component: PlayerSearch,
       props: true,
     },
     {
-      path: '*',
+      path: '/:pathMatch(.*)*',
       component: NotFound,
     },
   ],

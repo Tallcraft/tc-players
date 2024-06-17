@@ -1,40 +1,29 @@
 <template>
-<div>
-    <img alt="Tallcraft Logo" :src="logoSrc" style="display:block;
-              margin-left:auto;
-              margin-right:auto;
-              margin-top:3%;
-              margin-bottom:3%;
-              width:15%">
-        <h1>Players</h1>
-        <v-text-field
-            flat
-            solo-inverted
-            hide-details
-            prepend-inner-icon="search"
-            label="Player search"
-            v-model="playerInput"
-            @change="playerLookup"
+  <!-- Ewwwwwww, would like to figure out how to better achieve my goals here. -->
+
+  <div style="position: absolute; width:100vw; top:50%; translate: 0 -50%">
+    <div class="d-inline-flex justify-center align-center w-100">
+      <img alt="The Tallcraft Logo" :src="logoSrc" style="width:8rem" class="mr-2">
+      <h1 class="text-lg-h3">Players</h1>
+    </div>
+    <v-text-field
+      autofocus
+      flat
+      solo-inverted
+      hide-details
+      prepend-inner-icon="mdi-magnify"
+      label="Player search"
+      v-model="playerInput"
+      @change="playerLookup"
+      class="w-50 mr-auto ml-auto mt-5"
     ></v-text-field>
   </div>
 </template>
 
-<style scoped>
-  a {
-    text-decoration: none;
-  }
-  h1{
-      text-align:center;
-      font-size: 4vw;
-      margin-bottom: .5em;
-      margin-top: -1em;
-    }
-</style>
-
 <script>
 
 import gql from 'graphql-tag';
-import logo from '../assets/logo.svg';
+import logo from '@/assets/logo.svg';
 
 export default {
   name: 'MainView',
@@ -47,33 +36,9 @@ export default {
   data() {
     return {
       playerInput: '',
-      playerHistoryHeader: [
-        {
-          text: 'Name',
-          sortable: false,
-          value: 'type',
-        },
-        {
-          text: 'First Login',
-          sortable: false,
-          value: 'firstLogin',
-        },
-      ],
     };
   },
   computed: {
-    playerHistoryData() {
-      if (this.players === undefined) {
-        return [];
-      }
-      return this.players.map((player) => ({
-        name: player.lastSeenName,
-        firstLogin: this.formatDate(player.firstLogin * 1),
-      }));
-    },
-    getName(name) {
-      return `players/${name}`;
-    },
     logoSrc() {
       return logo;
     },
@@ -81,27 +46,6 @@ export default {
   methods: {
     playerLookup() {
       this.$router.push(`/search/${this.playerInput}`);
-    },
-    formatDate(date) {
-      if (date == null) {
-        return '-';
-      }
-      const d = new Date(date);
-      return d.toLocaleString();
-    },
-  },
-  apollo: {
-    // Query with parameters
-    players: {
-      // gql query
-      query: gql`
-      query {
-        players(limit:10){
-            lastSeenName
-            firstLogin
-          }
-        }
-      `,
     },
   },
 };
