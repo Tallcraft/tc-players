@@ -1,34 +1,34 @@
 <template>
-        <div class="d-inline">
-           <v-progress-linear indeterminate v-if="player == null"></v-progress-linear>
-            <v-card v-if="name === ''">
-              <h3 class="justify-center"
-              style="text-align:center;">Please provide a UUID.</h3>
-            </v-card>
-            <v-card v-else-if="player == null">
-              <h3 class="justify-center"
-              style="text-align:center;">Player not found.</h3>
-            </v-card>
-              <v-img
-                :src="playerAvatarUrl"
-                style="width:15vw; height:15vw; margin-left: auto; margin-right: auto; margin-top:1rem;"
-              >
-                <template v-slot:placeholder>
-                  <div class="d-flex align-center justify-center fill-height">
-                    <v-progress-circular
-                      color="grey-lighten-4"
-                      indeterminate
-                    ></v-progress-circular>
-                  </div>
-                </template>
-              </v-img>
-              <h1 class="text-center">
-                <v-chip :color="player.connectedTo!=null?'green':'red'">
-                  <p v-if="player.connectedTo!=null">Online</p>
-                  <p v-else>Offline</p>
-                </v-chip>
-                {{player.lastSeenName}}
-              </h1>
+        <div class="container">
+          <v-progress-linear indeterminate v-if="player == null"></v-progress-linear>
+          <v-card v-if="name === ''">
+            <h3 class="justify-center"
+            style="text-align:center;">Please provide a UUID.</h3>
+          </v-card>
+          <v-card v-else-if="player == null">
+            <h3 class="justify-center"
+            style="text-align:center;">Player not found.</h3>
+          </v-card>
+            <v-img
+              :src="playerAvatarUrl"
+              style="width:15vw; height:15vw; margin-left: auto; margin-right: auto; margin-top:1rem;"
+            >
+              <template v-slot:placeholder>
+                <div class="d-flex align-center justify-center fill-height">
+                  <v-progress-circular
+                    color="grey-lighten-4"
+                    indeterminate
+                  ></v-progress-circular>
+                </div>
+              </template>
+            </v-img>
+            <h1 class="text-center">
+              <v-chip :color="player.connectedTo!=null?'green':'red'">
+                <p v-if="player.connectedTo!=null">Online</p>
+                <p v-else>Offline</p>
+              </v-chip>
+              {{player.lastSeenName}}
+            </h1>
           <v-card class="mt-2 pt-2 pb-2">
             <p class="text-grey-lighten-1 text-xl-h6 text-center">UUID</p>
             <h2 class="text-center">
@@ -82,6 +82,14 @@
           </v-card>
         </div>
 </template>
+
+<style scoped>
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: min(50rem, 100vw);
+}
+</style>
 
 <script>
 import gql from 'graphql-tag';
