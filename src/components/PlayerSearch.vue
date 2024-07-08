@@ -128,10 +128,11 @@ export default {
       this.preTests();
       const page = (this.pageNum <= 0) ? 1 : this.pageNum;
       const searchName = this.cleanUpSearchString(this.searchString);
+      const searchNameArr = searchName.split(" ").map(elm => {return `"%${elm}%"`});
       const newPlayers = await this.$apollo.query({
         query: (!this.serverQuery) ? gql`
         query {
-          players(searchPlayerName:"%${searchName}%", limit:20, offset:${(page - 1) * 20}){
+          players(searchPlayerName:[${searchNameArr}], matchAll: true, limit:20, offset:${(page - 1) * 20}){
             totalCount
             result{
               lastSeenName
